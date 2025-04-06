@@ -1,0 +1,75 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /sugarnest/v0.1
+
+spring:
+  application:
+    name: back-end
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/test_db
+    username: root
+    password:
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        ddl-auto: update
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: minhthong262003@gmail.com
+    password: ttgs aafn pltm yyco
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 467811719826-i6ap1c344id4niejqe50obklunrptcrd.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+          facebook:
+            client-id: 1562454040935985
+            client-secret: 50d9c75f03a9c5130e6517ef38c976a4
+            scope: email, public_profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
+
+file:
+  upload-dir: uploads/
+
+SIGNER_KEY: Ls0Xqw3hOsUSFeHJ6QQNFtsFXmbcIpCay4gqTORtO89WHZyOYgdnSs0aiQKe2otd
+
+paypal:
+  client-id: Abo90Wztq8vanhzw0EO5zMhum7b1O6aI_1x4BTA8v7jqNIOGdthWxF-ZZpjhtEGg6CW0VWRdgg_hjdlb
+  client-secret: EEpPKUqIRD0gJPVKHVai84Yi0lauKUq3brqUN2AYkeIq1GHGbBJy_fA_q3bvj8Ha7cFZByFGKRvYyzro
+  mode: sandbox
+
+log:
+  formatDate: yyyy-MM-dd
+  path: ./home
+  file:
+    name: service_log
+    ext: .log
+    maxMb: 1
+    maxHistory: 10
+    zip:
+      ext: .zip
+      pattern: service_log_%d{yyyy-MM-dd}.%i.zip

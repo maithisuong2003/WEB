@@ -1,0 +1,31 @@
+.account-wrapper {
+    position: relative;
+    /* Tạo vị trí tương đối cho phần tử cha */
+}
+
+.logout-button {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border: none;
+    color: black;
+    padding: 0px 25px;
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.account-wrapper:hover .logout-button {
+    display: inline-block;
+}
+
+.logout-button:hover {
+    color: #fabd0d;
+}

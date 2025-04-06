@@ -1,0 +1,180 @@
+.sapo-combo-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 2;
+    min-width: 50px;
+}
+
+.sapo-combo-badge .icon-combo {
+    max-width: 50px;
+    max-height: 50px;
+}
+
+.sapo-combo-badge .label-combo {
+    max-width: 80px;
+    max-height: 40px;
+}
+
+.sapo-combo-badge .label-text {
+    display: inline-block;
+    max-width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 7px 10px;
+    word-wrap: break-word;
+    position: relative;
+}
+
+.module-combo {
+    border: 1px solid #C4CDD5;
+    overflow: hidden;
+    max-width: 100%;
+    border-radius: 4px;
+    color: #212b35;
+    margin-bottom: 20px;
+}
+.module-combo h4 {
+    margin: 0;
+    font-size: 16px;
+    padding: 6px 15px;
+    line-height: 1.4;
+    border-bottom: 1px solid #C4CDD5;
+    background: #E9B5B5;
+    color: #1C1C1C;
+}
+.module-combo .module-content-combo{
+    background: #FBF1F1;
+}
+.module-combo .list-product {
+    padding: 15px;
+}
+.module-combo .item-product {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.module-combo .item-product:last-child {
+    margin-bottom: 0;
+}
+.module-combo .item-product .product-image {
+    margin-right: 15px;
+    width: 90px;
+    flex-shrink: 0;
+}
+.module-combo .item-product .product-image img {
+    max-width: 100%;
+}
+.module-combo .item-product .product-title {
+    font-size: 14px;
+    line-height: 1.4;
+    padding-bottom: 0;
+    font-weight: 600;
+}
+.module-combo .item-product .product-title a{
+    text-decoration: none;
+    color: inherit;
+}
+.module-combo .item-product .product-title:hover, .module-combo .item-product .product-title a:hover {
+    color: #0089ff;
+}
+.module-combo .item-product .product-variant {
+    font-size: 12px;
+}
+.module-combo .item-product .price {
+    display: flex;
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+.module-combo .item-product .price .price-regular {
+    font-weight: bold;
+    margin-right: 20px;
+    font-size: 14px;
+    color: #E11B1E;
+}
+.module-combo .item-product .price del {
+    font-weight: 600;
+    color: #919191;
+}
+.module-combo .item-product .selector-variant-combo {
+    margin-top: 5px;
+    width: auto;
+    min-width: 80px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding: 3px 7px;
+    padding-right: 30px;
+}
+.module-combo .total-action {
+    padding: 15px 15px 5px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.module-combo .total-price-bg {
+    padding-right: 40px;
+    padding-bottom: 10px;
+}
+.module-combo .total-price-bg p {
+    margin: 3px 0;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+.module-combo .total-price-bg p span {
+    margin-right: 5px;
+    margin-left: 10px;
+}
+.module-combo .total-price-bg p del {
+    color: #919191;
+}
+.module-combo .total-price-bg p span.price-combo{
+    font-size: 14px;
+    color: #E11B1E;
+}
+.module-combo .action{
+    padding-bottom: 10px;
+}
+.module-combo .btn-addtocart-combo {
+    line-height: 1.4;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #ED1B24;
+    background: #ED1B24;
+    color: #FFFFFF;
+    font-size: 16px;
+    outline: none;
+    display: flex;
+    align-items: center;
+}
+.module-combo .btn-addtocart-combo[disabled]{
+    opacity: 0.8;
+}
+.module-combo .btn-addtocart-combo[disabled]:before{
+    content: "";
+    background: url("https://bizweb.dktcdn.net/100/319/535/files/icon-loading.svg?v=1598342178507") no-repeat center center;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+@media(max-width: 450px){
+    .module-combo .total-price-bg {
+        width: 100%;
+        padding-right: 0;
+    }
+    .module-combo .item-product .product-image{
+        width: 80px;
+    }
+    .module-combo .item-product .price{
+        flex-wrap: wrap;
+    }
+    .module-combo .item-product .price .price-regular{
+        margin-right: 10px;
+    }
+}

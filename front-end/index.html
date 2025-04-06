@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="" />
+    <meta name='revisit-after' content='2 days' />
+    <meta name="robots" content="noodp,index,follow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="description" content="">
+    <title>SugarNest </title>
+    <meta name="keywords" content="Giao diện website cho cửa hàng bán bánh ngọt, EGA-Cake, Egany" />
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="EGA Cake">
+    <link rel="icon" href="/src/images/icon.png" type="image/x-icon" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <link rel="stylesheet" href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/bootstrap-4-3-min.css?1704435927037">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link as="script" href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/jquery.js" />
+    <script src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/jquery.js" type="text/javascript"></script>
+
+    <link href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/account-style.css?1704435927037" rel="stylesheet" type="text/css" media="all" />
+</head>
+
+<body>
+    <div id="fb-root"></div>
+    <div id="root"></div>
+    <script type="module">
+        const path = window.location.pathname;
+        if (path.startsWith('/admin')) {
+            import('/src/admin/main.jsx');
+        } else {
+            import('/src/client/main.jsx');
+        }
+    </script>
+</body>
+
+</html>
