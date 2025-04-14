@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Breadcrumb from '../components/Breadcrumb.jsx';
-import axios from 'axios';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 import { REST_API_BASE_URL } from '../services/ProductService.js';
-
+import Breadcrumb from '../components/Breadcrumb.jsx';
+import '../assets/css/RegisterPage.css';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -16,10 +16,24 @@ const RegisterPage = () => {
         address: '',
         email: '',
         phone: '',
-        repassword: ''
+        repassword: '',
+        accountNameClass: '',
+        emailClass: '',
+        phoneClass: '',
+        passwordClass: '',
+        repasswordClass: ''
     });
 
-    const [errors, setErrors] = useState('');
+    const [errors, setErrors] = useState({
+        accountName: '',
+        password: '',
+        fullName: '',
+        birthday: '',
+        address: '',
+        email: '',
+        phone: '',
+        repassword: ''
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,15 +43,99 @@ const RegisterPage = () => {
             [name]: value
         });
 
+        // Clear error message for the current field
         setErrors({
             ...errors,
             [name]: ''
         });
+
+        let errorMessage = '';
+        let validationClass = '';
+
+        // Validate account name
+        if (name === 'accountName' && value) {
+            const accountNameRegex = /^[a-zA-Z0-9_]+$/;
+            if (!accountNameRegex.test(value)) {
+                errorMessage = 'Tên tài khoản không được chứa khoảng cách hoặc dấu.';
+                validationClass = 'invalid'; // Thêm lớp invalid
+            } else {
+                validationClass = 'valid'; // Thêm lớp valid
+            }
+        }
+
+        // Validate email
+        if (name === 'email' && value) {
+            const emailRegex = /^[\w.-]+@([\w-]+\.)+[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(value)) {
+                errorMessage = 'Email chưa đúng định dạng.';
+                validationClass = 'invalid'; // Thêm lớp invalid
+            } else {
+                validationClass = 'valid'; // Thêm lớp valid
+                axios.post(`${REST_API_BASE_URL}/account/checkEmail`, { email: value })
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            errorMessage = 'Email đã tồn tại.';
+                            validationClass = 'invalid'; // Thêm lớp invalid
+                        }
+                        setErrors(prevErrors => ({
+                            ...prevErrors,
+                            email: errorMessage
+                        }));
+                    }).catch(error => {
+                    console.error("There was an error with the Axios operation:", error);
+                });
+            }
+        }
+
+        // Validate phone number
+        if (name === 'phone' && value) {
+            const phoneNumberRegex = /^\d{10}$/;
+            if (!phoneNumberRegex.test(value)) {
+                errorMessage = 'Số điện thoại phải có đúng 10 chữ số.';
+                validationClass = 'invalid'; // Thêm lớp invalid
+            } else {
+                validationClass = 'valid'; // Thêm lớp valid
+            }
+        }
+
+        // Validate password
+        if (name === 'password' && value) {
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(value)) {
+                errorMessage = 'Mật khẩu phải có ít nhất 8 kí tự gồm ít nhất 1 kí tự in hoa và 1 kí tự đặc biệt.';
+                validationClass = 'invalid'; // Thêm lớp invalid
+            } else {
+                validationClass = 'valid'; // Thêm lớp valid
+            }
+        }
+
+        // Validate repassword
+        if (name === 'repassword' && value) {
+            if (formData.password !== value) {
+                errorMessage = 'Mật khẩu không trùng khớp.';
+                validationClass = 'invalid'; // Thêm lớp invalid
+            } else {
+                validationClass = 'valid'; // Thêm lớp valid
+            }
+        }
+
+        // Update error state and add validation class for the current field
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: errorMessage
+        }));
+
+        // Cập nhật class hợp lệ/không hợp lệ cho input
+        setFormData(prevData => ({
+            ...prevData,
+            [name + "Class"]: validationClass
+        }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // Check if there are any errors
         const hasErrors = Object.values(errors).some(error => error !== '');
         if (hasErrors) {
             Swal.fire({
@@ -53,7 +151,6 @@ const RegisterPage = () => {
 
         axios.post(`${REST_API_BASE_URL}/account/register`, dataToSubmit)
             .then(response => {
-                // Hiển thị SweetAlert2 để yêu cầu người dùng nhập mã xác thực
                 Swal.fire({
                     title: 'Nhập mã xác thực',
                     html: `<p style="font-size: 15px;">Chúng tôi đã gửi mã xác thực vào email: ${formData.email}.</p>`,
@@ -71,7 +168,6 @@ const RegisterPage = () => {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         const verificationCode = result.value;
-                        // Gửi mã xác thực đến máy chủ để kiểm tra
                         axios.post(`${REST_API_BASE_URL}/account/checkEmail`, { verificationCode })
                             .then(verifyResponse => {
                                 if (verifyResponse.data.code === 200) {
@@ -113,75 +209,6 @@ const RegisterPage = () => {
         navigate('/login');
     }
 
-    const handleBlur = (e) => {
-        const { name, value } = e.target;
-        let errorMessage = '';
-
-        if (name === 'accountName') {
-            const accountNameRegex = /^[a-zA-Z0-9_]+$/;
-            if (!accountNameRegex.test(value) && value !== null && value !== '') {
-                errorMessage = 'Tên tài khoản không được chứa khoảng cách hoặc dấu.';
-            }
-        }
-
-        if (name === 'email') {
-            const emailNameRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-            if (!emailNameRegex.test(value) && value !== null && value !== '') {
-                errorMessage = 'Email chưa đúng định dạng user@acb.zxc.';
-            } else {
-                axios.post('http://localhost:8080/sugarnest/v0.1/account/checkEmail', { email: formData.email })
-                    .then(response => {
-                        if (response.data.code === 200) {
-                            console.log('Email exists:', formData.email);
-                            errorMessage = 'Email đã tồn tại.';
-                        } else {
-                            console.log('Email does not exist:', formData.email);
-                            console.log(response);
-                        }
-                        setErrors({
-                            ...errors,
-                            [name]: errorMessage
-                        });
-                    }).catch(error => {
-                        console.error("There was an error with the Axios operation:", error);
-                    });
-                return;
-            }
-        }
-
-        if (name === 'phone') {
-            const phoneNumberRegex = /^\d{10}$/;
-            if (!phoneNumberRegex.test(value) && value !== null && value !== '') {
-                errorMessage = 'Số điện thoại phải có đúng 10 chữ số.';
-            }
-        }
-
-        if (name === 'password') {
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            if (!passwordRegex.test(value) && value !== null && value !== '') {
-                errorMessage = 'Mật khẩu phải có ít nhất 8 kí tự gồm ít nhất 1 kí tự in hoa và 1 kí tự đặc biệt.';
-            }
-        }
-
-
-        if (name === 'repassword' && value !== null && value !== '') {
-            if (formData.password !== formData.repassword) {
-                errorMessage = 'Mật khẩu không trùng khớp.';
-            }
-        }
-
-        setErrors({
-            ...errors,
-            [name]: errorMessage
-        });
-    };
-    const handleFacebookLogin = () => {
-        window.location.href = `${REST_API_BASE_URL}/oauth2/authorization/facebook`;
-    };
-
-    const handleGoogleLogin = () => {
-        window.location.href = `${REST_API_BASE_URL}/oauth2/authorization/google`;
-    };
     return (
         <>
             <Breadcrumb page={'Đăng ký'} />
@@ -195,7 +222,7 @@ const RegisterPage = () => {
                                 <a
                                     onClick={getLoginPage}
                                     style={{ textDecoration: "underline" }}
-                                    className="btn-link-style  btn-style margin-right-0"
+                                    className="btn-link-style btn-style margin-right-0"
                                 >
                                     Đăng nhập tại đây
                                 </a>
@@ -203,11 +230,10 @@ const RegisterPage = () => {
                         </div>
                         <div className="row">
                             <div className="col-12 col-md-6 col-lg-5 offset-md-3 py-3 mx-auto">
-                                <div className="page-login py-3 ">
+                                <div className="page-login py-3">
                                     <div id="login">
                                         <h2 className="text-center">Thông tin cá nhân</h2>
                                         <form onSubmit={handleSubmit} id="customer_register" acceptCharset="UTF-8">
-                                            <div className="form-signup " style={{ color: "red" }}></div>
                                             <div className="form-signup clearfix">
                                                 <div className="row">
                                                     <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12">
@@ -217,16 +243,15 @@ const RegisterPage = () => {
                                                             </label>
                                                             <input
                                                                 type="text"
-                                                                className="form-control form-control-lg"
+                                                                className={`form-control form-control-lg ${formData.accountNameClass}`}
                                                                 name="accountName"
                                                                 id="accountName"
                                                                 placeholder="Tên tài khoản"
                                                                 value={formData.accountName}
                                                                 onChange={handleChange}
-                                                                onBlur={handleBlur}
                                                                 required
                                                             />
-                                                            {errors.accountName && <span style={{ color: 'red' }}>{errors.accountName}</span>}
+                                                            {errors.accountName && <span>{errors.accountName}</span>}
                                                         </fieldset>
                                                     </div>
                                                     <div className="col-md-12">
@@ -236,7 +261,7 @@ const RegisterPage = () => {
                                                             </label>
                                                             <input
                                                                 type="text"
-                                                                className="form-control form-control-lg"
+                                                                className={`form-control form-control-lg ${formData.fullNameClass}`}
                                                                 name="fullName"
                                                                 id="fullName"
                                                                 placeholder="Họ tên"
@@ -254,7 +279,7 @@ const RegisterPage = () => {
                                                             <input
                                                                 type="date"
                                                                 id="birthday"
-                                                                className="form-control form-control-comment form-control-lg"
+                                                                className={`form-control form-control-lg ${formData.birthdayClass}`}
                                                                 name="birthday"
                                                                 value={formData.birthday}
                                                                 onChange={handleChange}
@@ -271,132 +296,79 @@ const RegisterPage = () => {
                                                             </label>
                                                             <input
                                                                 type="email"
-                                                                className="form-control form-control-lg"
+                                                                className={`form-control form-control-lg ${formData.emailClass}`}
                                                                 name="email"
                                                                 id="email"
                                                                 placeholder="Email"
                                                                 value={formData.email}
                                                                 onChange={handleChange}
-                                                                onBlur={handleBlur}
                                                                 required
                                                             />
-                                                            {errors.email && <span style={{ color: 'red' }}>{errors.email}</span>}
-                                                        </fieldset>
-                                                    </div>
-                                                    <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Số điện thoại <span className="required">*</span>{" "}
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control form-control-lg"
-                                                                name="phone"
-                                                                id="phone"
-                                                                placeholder="Số điện thoại"
-                                                                value={formData.phone}
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                required
-                                                            />
-                                                            {errors.phone && <span style={{ color: 'red' }}>{errors.phone}</span>}
+                                                            {errors.email && <span>{errors.email}</span>}
                                                         </fieldset>
                                                     </div>
                                                     <div className="col-md-12">
                                                         <fieldset className="form-group">
                                                             <label>
-                                                                Địa chỉ <span className="required">*</span>
+                                                                Số điện thoại <span className="required">*</span>
                                                             </label>
                                                             <input
-                                                                type="text"
-                                                                className="form-control form-control-lg"
-                                                                name="address"
-                                                                id="address"
-                                                                placeholder="Địa chỉ"
-                                                                value={formData.address}
+                                                                type="tel"
+                                                                className={`form-control form-control-lg ${formData.phoneClass}`}
+                                                                name="phone"
+                                                                id="phone"
+                                                                placeholder="Số điện thoại"
+                                                                value={formData.phone}
                                                                 onChange={handleChange}
                                                                 required
                                                             />
+                                                            {errors.phone && <span>{errors.phone}</span>}
                                                         </fieldset>
                                                     </div>
-                                                    <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                                                    <div className="col-md-12">
                                                         <fieldset className="form-group">
                                                             <label>
-                                                                Mật khẩu <span className="required">*</span>{" "}
+                                                                Mật khẩu <span className="required">*</span>
                                                             </label>
                                                             <input
                                                                 type="password"
-                                                                className="form-control form-control-lg"
+                                                                className={`form-control form-control-lg ${formData.passwordClass}`}
                                                                 name="password"
                                                                 id="password"
                                                                 placeholder="Mật khẩu"
                                                                 value={formData.password}
                                                                 onChange={handleChange}
-                                                                onBlur={handleBlur}
                                                                 required
                                                             />
-                                                            {errors.password && <span style={{ color: 'red' }}>{errors.password}</span>}
+                                                            {errors.password && <span>{errors.password}</span>}
                                                         </fieldset>
                                                     </div>
-                                                    <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                                                    <div className="col-md-12">
                                                         <fieldset className="form-group">
                                                             <label>
-                                                                Nhập lại mật khẩu <span className="required">*</span>{" "}
+                                                                Xác nhận mật khẩu <span className="required">*</span>
                                                             </label>
                                                             <input
                                                                 type="password"
-                                                                className="form-control form-control-lg"
+                                                                className={`form-control form-control-lg ${formData.repasswordClass}`}
                                                                 name="repassword"
                                                                 id="repassword"
-                                                                placeholder="Nhập lại mật khẩu"
+                                                                placeholder="Xác nhận mật khẩu"
                                                                 value={formData.repassword}
                                                                 onChange={handleChange}
-                                                                onBlur={handleBlur}
                                                                 required
                                                             />
-                                                            {errors.repassword && <span style={{ color: 'red' }}>{errors.repassword}</span>}
+                                                            {errors.repassword && <span>{errors.repassword}</span>}
                                                         </fieldset>
                                                     </div>
                                                 </div>
-                                                <div className="section margin-top-10 button_bottom mt-3">
-                                                    <button
-                                                        type="submit"
-                                                        value="Đăng ký"
-                                                        className="btn  btn-style  btn_register btn-block"
-                                                    >
+                                                <div className="form-submit text-center">
+                                                    <button type="submit" className="btn btn-primary btn-lg">
                                                         Đăng ký
                                                     </button>
                                                 </div>
                                             </div>
                                         </form>
-
-                                        <div className="block social-login--facebooks margin-top-20 text-center">
-                                            <p className="a-center text-secondary">Hoặc đăng nhập bằng</p>
-                                            <a
-                                                onClick={handleFacebookLogin}
-                                                className="social-login--facebook"
-                                            >
-                                                <img
-                                                    style={{ marginRight: '5px', borderRadius: '5px' }}
-                                                    width="129px"
-                                                    height="37px"
-                                                    alt="facebook-login-button"
-                                                    src="//bizweb.dktcdn.net/assets/admin/images/login/fb-btn.svg"
-                                                />
-                                            </a>
-                                            <a
-                                                onClick={handleGoogleLogin}
-                                                className="social-login--google"
-                                            >
-                                                <img
-                                                    style={{ marginLeft: '5px', borderRadius: '5px' }}
-                                                    width="129px"
-                                                    height="37px"
-                                                    alt="google-login-button"
-                                                    src="//bizweb.dktcdn.net/assets/admin/images/login/gp-btn.svg"
-                                                />
-                                            </a>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -405,7 +377,7 @@ const RegisterPage = () => {
                 </div>
             </section>
         </>
-    )
-}
+    );
+};
 
-export default RegisterPage
+export default RegisterPage;
