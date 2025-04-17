@@ -1,0 +1,102 @@
+/* General styles for the container and form */
+.page-login {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-signup .row {
+    margin-bottom: 15px;
+}
+
+.form-signup .form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-signup .form-control {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.form-signup .form-control:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Tô màu viền cho input hợp lệ và không hợp lệ */
+.form-control.valid {
+    border-color: #28a745; /* Màu xanh cho input hợp lệ */
+}
+
+.form-control.invalid {
+    border-color: #dc3545; /* Màu đỏ cho input không hợp lệ */
+}
+
+.form-signup .form-control.error {
+    border-color: #dc3545; /* Màu đỏ cho input có lỗi */
+}
+
+/* Style for error messages */
+input.invalid + span {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Button styles */
+button.btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+button.btn-link-style {
+    text-decoration: none;
+    font-size: 14px;
+    color: #007bff;
+    font-weight: 600;
+}
+
+button.btn-link-style:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 767px) {
+    .page-login {
+        padding: 15px;
+    }
+
+    .form-signup .form-group label {
+        font-size: 12px;
+    }
+
+    .form-signup .form-control {
+        font-size: 14px;
+    }
+
+    button.btn-primary {
+        font-size: 14px;
+    }
+}
+

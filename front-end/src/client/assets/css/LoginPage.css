@@ -1,0 +1,159 @@
+.input-default {
+    padding: 10px 12px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.input-error {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+}
+
+.input-valid {
+    border-color: #2ecc71 !important;
+    box-shadow: 0 0 5px rgba(46, 204, 113, 0.3);
+}
+
+.label-error {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+/* Tổng thể */
+.section {
+    background-color: #f0f4f8;
+    min-height: 100vh;
+    padding: 40px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container.card {
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 40px 20px;
+}
+
+/* Heading */
+.heading-bar h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+}
+
+.heading-bar p {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Form */
+form#customer_login {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+fieldset.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+    color: #333;
+}
+
+input.form-control {
+    padding: 10px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Viền đỏ nếu không hợp lệ */
+input.form-control.invalid {
+    border-color: #e74c3c;
+}
+
+/* Viền xanh nếu hợp lệ */
+input.form-control.valid {
+    border-color: #2ecc71;
+}
+
+/* Nút đăng nhập */
+button.btn-login {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button.btn-login:hover {
+    background-color: #0056b3;
+}
+
+/* Link Đăng ký / Quên mật khẩu */
+a.btn-link-style {
+    cursor: pointer;
+    color: #007bff;
+    transition: text-decoration 0.3s;
+}
+
+a.btn-link-style:hover {
+    text-decoration: underline;
+}
+
+/* Mạng xã hội */
+.social-login--facebooks {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.social-login--facebook img,
+.social-login--google img {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.social-login--facebook img:hover,
+.social-login--google img:hover {
+    transform: scale(1.05);
+}
+
+/* Thông báo lỗi */
+div[style*="color: red"] {
+    margin-top: 10px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container.card {
+        padding: 20px 10px;
+    }
+
+    .heading-bar h1 {
+        font-size: 24px;
+    }
+}
