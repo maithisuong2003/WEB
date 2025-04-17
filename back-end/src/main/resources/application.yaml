@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /sugarnest/v0.1
+    context-path: /laptopshop/v0.1
 
 spring:
   application:
@@ -36,14 +36,13 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
-
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 467811719826-i6ap1c344id4niejqe50obklunrptcrd.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 964732288594-4gqoggefb34c97skb951vc4hnnkptk7j.apps.googleusercontent.com
+            client-secret: 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
             scope: profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
           facebook:
