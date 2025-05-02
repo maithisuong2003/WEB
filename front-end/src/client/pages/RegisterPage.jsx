@@ -168,28 +168,25 @@ const RegisterPage = () => {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         const verificationCode = result.value;
-                        axios.post(`${REST_API_BASE_URL}/account/checkEmail`, { verificationCode })
+
+                        // ✅ Gửi cả email và mã xác thực về backend
+                        axios.post(`${REST_API_BASE_URL}/email/verify_code`, {
+                            email: formData.email,
+                            verificationCode: verificationCode
+                        })
                             .then(verifyResponse => {
-                                if (verifyResponse.data.code === 200) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Đăng ký thành công',
-                                        text: 'Tài khoản của bạn đã được xác thực!'
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Mã xác thực không đúng',
-                                        text: 'Vui lòng thử lại.'
-                                    });
-                                }
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Đăng ký thành công',
+                                    text: 'Tài khoản của bạn đã được xác thực!'
+                                });
                             })
                             .catch(verifyError => {
                                 console.error('Error verifying code:', verifyError);
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Có lỗi xảy ra',
-                                    text: 'Vui lòng thử lại sau.'
+                                    title: 'Mã xác thực không đúng',
+                                    text: 'Vui lòng thử lại.'
                                 });
                             });
                     }
@@ -203,6 +200,7 @@ const RegisterPage = () => {
                     text: 'Vui lòng thử lại.'
                 });
             });
+
     };
 
     function getLoginPage() {

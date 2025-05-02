@@ -19,9 +19,9 @@ import site.sugarnest.backend.constant.PredefinedPermission;
 import site.sugarnest.backend.entities.AccountEntity;
 import site.sugarnest.backend.entities.RoleEntity;
 import site.sugarnest.backend.entities.PermissionEntity;
-import site.sugarnest.backend.reponsitoties.IAccountRepository;
-import site.sugarnest.backend.reponsitoties.IPermissionRepository;
-import site.sugarnest.backend.reponsitoties.IRoleRepository;
+import site.sugarnest.backend.reponsitories.IAccountRepository;
+import site.sugarnest.backend.reponsitories.IPermissionRepository;
+import site.sugarnest.backend.reponsitories.IRoleRepository;
 
 @Configuration
 @RequiredArgsConstructor
