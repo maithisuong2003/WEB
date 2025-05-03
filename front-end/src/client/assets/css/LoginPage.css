@@ -1,3 +1,134 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    height: 100vh;
+    background: #eefaf7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    min-width: 150px;
+    justify-content: center;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: background 0.3s, box-shadow 0.3s;
+    font-size: 14px;
+}
+
+.social-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.social-btn:hover {
+    background: #f1f1f1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.login-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    height: 530px;
+    text-align: center;
+}
+
+.login-title {
+    margin-top: -10px;
+    margin-bottom: 30px;
+    font-size: 23px;
+    color: #333;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.login-error-message {
+    text-align: center;
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.login-form label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.login-form input {
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.login-form input:focus {
+    border-color: #19b0ab;
+}
+
+.login-form button {
+    padding: 12px;
+    border-radius: 25px;
+    border: none;
+    background: linear-gradient(90deg, #19b0ab, #7ddfbb);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: transform 0.2s;
+}
+
+.login-form button:hover {
+    transform: scale(1.05);
+}
+
+.or-text {
+    margin: 15px 0 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.social-buttons button {
+    background: transparent;
+    border: none;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.social-buttons img {
+    width: 40px;
+    height: 40px;
+}
+
+.register-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+.register-link {
+    color: #19b0ab;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .input-default {
     padding: 10px 12px;
     border: 1.5px solid #ccc;
@@ -24,12 +155,18 @@
 }
 
 .error-message {
-    color: #e74c3c;
-    font-size: 0.875rem;
-    margin-top: 5px;
+    min-height: 18px;
+    font-size: 13px;
+    color: transparent;
+    margin-top: -5px;
+    transition: color 0.2s ease;
 }
 
-/* Tổng thể */
+.error-message.visible {
+    color: red;
+}
+
+
 .section {
     background-color: #f0f4f8;
     min-height: 100vh;
@@ -83,19 +220,16 @@ input.form-control {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Viền đỏ nếu không hợp lệ */
 input.form-control.invalid {
     border-color: #e74c3c;
 }
 
-/* Viền xanh nếu hợp lệ */
 input.form-control.valid {
     border-color: #2ecc71;
 }
 
-/* Nút đăng nhập */
 button.btn-login {
-    background-color: #007bff;
+    background-color: #0997a4;
     border: none;
     color: white;
     font-weight: 600;
@@ -107,13 +241,12 @@ button.btn-login {
 }
 
 button.btn-login:hover {
-    background-color: #0056b3;
+    background-color: #0997a4;
 }
 
-/* Link Đăng ký / Quên mật khẩu */
 a.btn-link-style {
     cursor: pointer;
-    color: #007bff;
+    color: #0997a4;
     transition: text-decoration 0.3s;
 }
 
@@ -134,26 +267,41 @@ a.btn-link-style:hover {
     cursor: pointer;
     transition: transform 0.2s;
 }
-
-.social-login--facebook img:hover,
-.social-login--google img:hover {
-    transform: scale(1.05);
+.forgot-password-text {
+    display: block;
+    text-align: center;
+    margin: 8px 0;
 }
 
-/* Thông báo lỗi */
-div[style*="color: red"] {
-    margin-top: 10px;
-    font-weight: 500;
-    font-size: 14px;
+.forgot-password-text a {
+    color: #0997a4;
+    text-decoration: none;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .container.card {
-        padding: 20px 10px;
-    }
-
-    .heading-bar h1 {
-        font-size: 24px;
-    }
+.forgot-password-text a:hover {
+    text-decoration: underline;
 }
+
+.or-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 12px 0;
+}
+
+.or-separator::before,
+.or-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+}
+
+.or-separator:not(:empty)::before {
+    margin-right: 10px;
+}
+
+.or-separator:not(:empty)::after {
+    margin-left: 10px;
+}
+
+
