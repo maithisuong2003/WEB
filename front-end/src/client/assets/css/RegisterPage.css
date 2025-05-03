@@ -1,102 +1,107 @@
-/* General styles for the container and form */
-.page-login {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0fcfa;
+    min-height: 100vh;
 }
 
-.form-signup .row {
-    margin-bottom: 15px;
+.register-form {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 100%;
+    height: 700px;
 }
 
-.form-signup .form-group label {
-    font-size: 14px;
-    font-weight: 600;
+.register-form h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.form-group {
+    margin-bottom: -10px;
+}
+
+
+.register-form input {
+    width: 100%;
+    padding: 12px 18px;
+    margin: 10px 0;
+    border-radius: 50px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+    font-size: 15px;
+}
+.register-title {
+    margin-top: -10px;
+    font-size: 23px;
     color: #333;
 }
-
-.form-signup .form-control {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    margin-top: 5px;
-    transition: border-color 0.3s ease;
+.register-title {
+    margin-bottom: 10px !important;
 }
 
-.form-signup .form-control:focus {
-    border-color: #007bff;
+.register-form input:focus {
+    border-color: #00cba9;
     outline: none;
 }
 
-/* Tô màu viền cho input hợp lệ và không hợp lệ */
-.form-control.valid {
-    border-color: #28a745; /* Màu xanh cho input hợp lệ */
+.register-form input.invalid {
+    border-color: red;
 }
 
-.form-control.invalid {
-    border-color: #dc3545; /* Màu đỏ cho input không hợp lệ */
-}
-
-.form-signup .form-control.error {
-    border-color: #dc3545; /* Màu đỏ cho input có lỗi */
-}
-
-/* Style for error messages */
-input.invalid + span {
-    color: #dc3545;
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-/* Button styles */
-button.btn-primary {
+.register-form button {
     width: 100%;
     padding: 12px;
-    font-size: 16px;
-    background-color: #007bff;
     border: none;
-    color: #fff;
-    border-radius: 5px;
+    border-radius: 50px;
+    background: linear-gradient(90deg, #19b0ab, #7ddfbb);
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
-
-button.btn-primary:hover {
-    background-color: #0056b3;
+.register-form button:hover {
+    border-color: #19b0ab;
 }
-
-button.btn-link-style {
-    text-decoration: none;
+.register-form button:hover {
+    transform: scale(1.05);
+}
+.redirect {
+    text-align: center;
+    margin-top: 15px;
     font-size: 14px;
+}
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    width: 100%;
+    padding-right: 40px; /* chừa chỗ cho icon */
+}
+
+.eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 18px;
+}
+.register-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #333;
+}
+
+.register-text .btn-link-style {
+    margin-left: 5px;
     color: #007bff;
-    font-weight: 600;
+    cursor: pointer;
 }
-
-button.btn-link-style:hover {
-    text-decoration: underline;
-}
-
-/* Responsive design for smaller screens */
-@media (max-width: 767px) {
-    .page-login {
-        padding: 15px;
-    }
-
-    .form-signup .form-group label {
-        font-size: 12px;
-    }
-
-    .form-signup .form-control {
-        font-size: 14px;
-    }
-
-    button.btn-primary {
-        font-size: 14px;
-    }
-}
-

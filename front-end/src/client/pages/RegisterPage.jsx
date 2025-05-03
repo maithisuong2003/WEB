@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import axios from 'axios';
-import { REST_API_BASE_URL } from '../services/ProductService.js';
-import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../assets/css/RegisterPage.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import axios from "axios";
+import Swal from "sweetalert2";
+import {REST_API_BASE_URL} from "../services/ProductService.js";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -34,101 +35,97 @@ const RegisterPage = () => {
         phone: '',
         repassword: ''
     });
-
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepassword, setShowRepassword] = useState(false);
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-
-        // Clear error message for the current field
-        setErrors({
-            ...errors,
-            [name]: ''
-        });
 
         let errorMessage = '';
         let validationClass = '';
 
-        // Validate account name
-        if (name === 'accountName' && value) {
-            const accountNameRegex = /^[a-zA-Z0-9_]+$/;
-            if (!accountNameRegex.test(value)) {
-                errorMessage = 'Tên tài khoản không được chứa khoảng cách hoặc dấu.';
-                validationClass = 'invalid'; // Thêm lớp invalid
-            } else {
-                validationClass = 'valid'; // Thêm lớp valid
+        // Nếu người dùng đang xoá hết nội dung
+        if (!value.trim()) {
+            errorMessage = 'Vui lòng điền vào mục này';
+            validationClass = 'invalid';
+        } else {
+            // Validate theo từng trường
+            switch (name) {
+                case 'accountName': {
+                    const accountNameRegex = /^[a-zA-Z0-9_]+$/;
+                    if (!accountNameRegex.test(value)) {
+                        errorMessage = 'Tên tài khoản không được chứa khoảng cách hoặc dấu.';
+                        validationClass = 'invalid';
+                    } else {
+                        validationClass = 'valid';
+                    }
+                    break;
+                }
+                case 'email': {
+                    const emailRegex = /^[\w.-]+@([\w-]+\.)+[a-zA-Z]{2,}$/;
+                    if (!emailRegex.test(value)) {
+                        errorMessage = 'Email chưa đúng định dạng.';
+                        validationClass = 'invalid';
+                    } else {
+                        validationClass = 'valid';
+                        // Kiểm tra trùng email
+                        axios.post(`${REST_API_BASE_URL}/account/checkEmail`, { email: value })
+                            .then(response => {
+                                if (response.data.code === 200) {
+                                    setErrors(prevErrors => ({
+                                        ...prevErrors,
+                                        email: 'Email đã tồn tại.'
+                                    }));
+                                }
+                            }).catch(error => {
+                            console.error("Lỗi khi kiểm tra email:", error);
+                        });
+                    }
+                    break;
+                }
+                case 'phone': {
+                    const phoneRegex = /^\d{10}$/;
+                    if (!phoneRegex.test(value)) {
+                        errorMessage = 'Số điện thoại phải có đúng 10 chữ số.';
+                        validationClass = 'invalid';
+                    } else {
+                        validationClass = 'valid';
+                    }
+                    break;
+                }
+                case 'password': {
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                    if (!passwordRegex.test(value)) {
+                        errorMessage = 'Mật khẩu phải có ít nhất 8 kí tự gồm ít nhất 1 kí tự in hoa và 1 kí tự đặc biệt.';
+                        validationClass = 'invalid';
+                    } else {
+                        validationClass = 'valid';
+                    }
+                    break;
+                }
+                case 'repassword': {
+                    if (value !== formData.password) {
+                        errorMessage = 'Mật khẩu không trùng khớp.';
+                        validationClass = 'invalid';
+                    } else {
+                        validationClass = 'valid';
+                    }
+                    break;
+                }
+                default:
+                    validationClass = 'valid';
             }
         }
 
-        // Validate email
-        if (name === 'email' && value) {
-            const emailRegex = /^[\w.-]+@([\w-]+\.)+[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(value)) {
-                errorMessage = 'Email chưa đúng định dạng.';
-                validationClass = 'invalid'; // Thêm lớp invalid
-            } else {
-                validationClass = 'valid'; // Thêm lớp valid
-                axios.post(`${REST_API_BASE_URL}/account/checkEmail`, { email: value })
-                    .then(response => {
-                        if (response.data.code === 200) {
-                            errorMessage = 'Email đã tồn tại.';
-                            validationClass = 'invalid'; // Thêm lớp invalid
-                        }
-                        setErrors(prevErrors => ({
-                            ...prevErrors,
-                            email: errorMessage
-                        }));
-                    }).catch(error => {
-                    console.error("There was an error with the Axios operation:", error);
-                });
-            }
-        }
+        // Cập nhật formData và lỗi
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: value,
+            [name + "Class"]: validationClass
+        }));
 
-        // Validate phone number
-        if (name === 'phone' && value) {
-            const phoneNumberRegex = /^\d{10}$/;
-            if (!phoneNumberRegex.test(value)) {
-                errorMessage = 'Số điện thoại phải có đúng 10 chữ số.';
-                validationClass = 'invalid'; // Thêm lớp invalid
-            } else {
-                validationClass = 'valid'; // Thêm lớp valid
-            }
-        }
-
-        // Validate password
-        if (name === 'password' && value) {
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            if (!passwordRegex.test(value)) {
-                errorMessage = 'Mật khẩu phải có ít nhất 8 kí tự gồm ít nhất 1 kí tự in hoa và 1 kí tự đặc biệt.';
-                validationClass = 'invalid'; // Thêm lớp invalid
-            } else {
-                validationClass = 'valid'; // Thêm lớp valid
-            }
-        }
-
-        // Validate repassword
-        if (name === 'repassword' && value) {
-            if (formData.password !== value) {
-                errorMessage = 'Mật khẩu không trùng khớp.';
-                validationClass = 'invalid'; // Thêm lớp invalid
-            } else {
-                validationClass = 'valid'; // Thêm lớp valid
-            }
-        }
-
-        // Update error state and add validation class for the current field
         setErrors(prevErrors => ({
             ...prevErrors,
             [name]: errorMessage
-        }));
-
-        // Cập nhật class hợp lệ/không hợp lệ cho input
-        setFormData(prevData => ({
-            ...prevData,
-            [name + "Class"]: validationClass
         }));
     };
 
@@ -202,179 +199,154 @@ const RegisterPage = () => {
             });
 
     };
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+
+        if (!value.trim()) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: 'Vui lòng điền vào mục này'
+            }));
+
+            setFormData(prevData => ({
+                ...prevData,
+                [name + "Class"]: 'invalid'
+            }));
+        }
+    };
 
     function getLoginPage() {
         navigate('/login');
     }
-
     return (
-        <>
-            <Breadcrumb page={'Đăng ký'} />
-            <section className="section">
-                <div style={{ borderRadius: '20px' }} className="container margin-bottom-20 card py-2">
-                    <div className="wrap_background_aside margin-bottom-40 page_login">
-                        <div className="heading-bar text-center">
-                            <h1 className="title_page mb-0">Đăng ký tài khoản</h1>
-                            <span className="or">
-                                Bạn đã có tài khoản ?{" "}
-                                <a
-                                    onClick={getLoginPage}
-                                    style={{ textDecoration: "underline" }}
-                                    className="btn-link-style btn-style margin-right-0"
-                                >
-                                    Đăng nhập tại đây
-                                </a>
-                            </span>
-                        </div>
-                        <div className="row">
-                            <div className="col-12 col-md-6 col-lg-5 offset-md-3 py-3 mx-auto">
-                                <div className="page-login py-3">
-                                    <div id="login">
-                                        <h2 className="text-center">Thông tin cá nhân</h2>
-                                        <form onSubmit={handleSubmit} id="customer_register" acceptCharset="UTF-8">
-                                            <div className="form-signup clearfix">
-                                                <div className="row">
-                                                    <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Tên tài khoản <span className="required">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className={`form-control form-control-lg ${formData.accountNameClass}`}
-                                                                name="accountName"
-                                                                id="accountName"
-                                                                placeholder="Tên tài khoản"
-                                                                value={formData.accountName}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                            {errors.accountName && <span>{errors.accountName}</span>}
-                                                        </fieldset>
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Họ tên <span className="required">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className={`form-control form-control-lg ${formData.fullNameClass}`}
-                                                                name="fullName"
-                                                                id="fullName"
-                                                                placeholder="Họ tên"
-                                                                value={formData.fullName}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                        </fieldset>
-                                                    </div>
-                                                    <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Ngày tháng năm sinh <span className="required">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="date"
-                                                                id="birthday"
-                                                                className={`form-control form-control-lg ${formData.birthdayClass}`}
-                                                                name="birthday"
-                                                                value={formData.birthday}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                        </fieldset>
-                                                    </div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Email <span className="required">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="email"
-                                                                className={`form-control form-control-lg ${formData.emailClass}`}
-                                                                name="email"
-                                                                id="email"
-                                                                placeholder="Email"
-                                                                value={formData.email}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                            {errors.email && <span>{errors.email}</span>}
-                                                        </fieldset>
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Số điện thoại <span className="required">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="tel"
-                                                                className={`form-control form-control-lg ${formData.phoneClass}`}
-                                                                name="phone"
-                                                                id="phone"
-                                                                placeholder="Số điện thoại"
-                                                                value={formData.phone}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                            {errors.phone && <span>{errors.phone}</span>}
-                                                        </fieldset>
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Mật khẩu <span className="required">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="password"
-                                                                className={`form-control form-control-lg ${formData.passwordClass}`}
-                                                                name="password"
-                                                                id="password"
-                                                                placeholder="Mật khẩu"
-                                                                value={formData.password}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                            {errors.password && <span>{errors.password}</span>}
-                                                        </fieldset>
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                        <fieldset className="form-group">
-                                                            <label>
-                                                                Xác nhận mật khẩu <span className="required">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="password"
-                                                                className={`form-control form-control-lg ${formData.repasswordClass}`}
-                                                                name="repassword"
-                                                                id="repassword"
-                                                                placeholder="Xác nhận mật khẩu"
-                                                                value={formData.repassword}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                            {errors.repassword && <span>{errors.repassword}</span>}
-                                                        </fieldset>
-                                                    </div>
-                                                </div>
-                                                <div className="form-submit text-center">
-                                                    <button type="submit" className="btn btn-primary btn-lg">
-                                                        Đăng ký
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div className="register-container">
+            <form className="register-form" onSubmit={handleSubmit}>
+                <h2 className="register-title">Đăng ký</h2>
+                <div className="form-group">
+                    <input
+                        type="text"
+                        name="accountName"
+                        placeholder="Tên tài khoản"
+                        value={formData.accountName}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+
+                    />
+                    <div className={`error-message ${errors.accountName ? 'visible' : ''}`}>
+                        {errors.accountName || ' '}
                     </div>
                 </div>
-            </section>
-        </>
+
+                <div className="form-group">
+                    <input
+                        type="text"
+                        name="fullName"
+                        placeholder="Họ tên"
+                        value={formData.fullName}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    />
+                    <div className={`error-message ${errors.fullName ? 'visible' : ''}`}>
+                        {errors.fullName || ' '}
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                    />
+                    <div className={`error-message ${errors.email ? 'visible' : ''}`}>
+                        {errors.email || ' '}
+                    </div>
+                </div>
+                <div className="form-group">
+                    <input
+                        type="date"
+                        id="birthday"
+                        name="birthday"
+                        value={formData.birthday}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        required
+                    />
+                    <div className={`error-message ${errors.birthday ? 'visible' : ''}`}>
+                        {errors.birthday || ' '}
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <input
+                        type="text"
+                        name="phone"
+                        placeholder="Số điện thoại"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    />
+                    <div className={`error-message ${errors.phone ? 'visible' : ''}`}>
+                        {errors.phone || ' '}
+                    </div>
+                </div>
+
+                <div className="form-group password-field">
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="Mật khẩu"
+                        value={formData.password}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                    />
+                    <FontAwesomeIcon
+                        icon={showPassword ? faEyeSlash : faEye}
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="eye-icon"
+                        style={{top:"40%"}}
+                    />
+                    <div className={`error-message ${errors.password ? 'visible' : ''}`}>
+                        {errors.password || ' '}
+                    </div>
+                </div>
+
+                <div className="form-group password-field">
+                    <input
+                        type={showRepassword ? 'text' : 'password'}
+                        name="repassword"
+                        placeholder="Xác nhận mật khẩu"
+                        value={formData.repassword}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    />
+                    <FontAwesomeIcon
+                        icon={showRepassword ? faEyeSlash : faEye}
+                        onClick={() => setShowRepassword(!showRepassword)}
+                        className="eye-icon"
+                        style={{top:"40%"}}
+                    />
+                    <div className={`error-message ${errors.repassword ? 'visible' : ''}`}>
+                        {errors.repassword || ' '}
+                    </div>
+                </div>
+
+                <button type="submit">Đăng ký</button>
+
+                <p className="register-text">
+                    Bạn đã có tài khoản?{' '}
+                    <a
+                        onClick={getLoginPage}
+                        style={{textDecoration: "underline"}}
+                        className="btn-link-style btn-style margin-right-0"
+                    >
+                        Đăng nhập
+                    </a>
+                </p>
+            </form>
+        </div>
     );
 };
 

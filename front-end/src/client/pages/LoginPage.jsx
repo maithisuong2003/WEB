@@ -1,53 +1,45 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
-import Breadcrumb from '../components/Breadcrumb.jsx';
 import { REST_API_BASE_URL } from '../services/ProductService.js';
 import '../assets/css/LoginPage.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const LoginPage = () => {
     const { login } = useAuth();
     const [accountName, setAccountName] = useState('');
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [accountNameError, setAccountNameError] = useState('');
     const [error, setError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
-
-    const validatePassword = (password) => {
-        const minLength = /.{8,}/;
-        const hasUpperCase = /[A-Z]/;
-        const hasNumber = /[0-9]/;
-
-        if (!minLength.test(password)) {
-            return 'Mật khẩu phải có ít nhất 8 ký tự.';
-        }
-        if (!hasUpperCase.test(password)) {
-            return 'Mật khẩu phải có ít nhất 1 chữ cái viết hoa.';
-        }
-        if (!hasNumber.test(password)) {
-            return 'Mật khẩu phải có ít nhất 1 chữ số.';
-        }
-        return '';
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const passwordValidation = validatePassword(password);
-        if (passwordValidation) {
-            setPasswordError(passwordValidation);
-            return;
+
+        let hasError = false;
+        if (accountName.trim() === '') {
+            setAccountNameError('Vui lòng điền vào mục này ');
+            hasError = true;
         }
+        if (password.trim() === '') {
+            setPasswordError('Vui lòng điền vào mục này');
+            hasError = true;
+        }
+        if (hasError) return;
 
         try {
             const loginSuccess = await login(accountName, password);
             if (!loginSuccess) {
-                setError('Đăng nhập thất bại. Vui lòng thử lại.');
+                setError('Đăng nhập thất bại. Vui lòng thử lại');
             } else {
                 navigate('/');
             }
         } catch (error) {
             console.error('Login failed:', error);
-            setError('Đăng nhập thất bại. Vui lòng thử lại.');
+            setError('Đăng nhập thất bại. Vui lòng thử lại');
         }
     };
 
@@ -62,120 +54,125 @@ const LoginPage = () => {
         window.location.href = `${REST_API_BASE_URL}/oauth2/authorization/google`;
     };
 
-    const isPasswordValid = passwordError === '' && password.length > 0;
-    const isAccountNameValid = accountName.trim().length > 0;
-
     return (
-        <>
-            <Breadcrumb page={'Đăng nhập'} />
-            <section className="section">
-                <div style={{ borderRadius: '20px' }} className="container margin-bottom-20 card py-20">
-                    <div className="wrap_background_aside margin-bottom-40 page_login">
-                        <div className="heading-bar text-center">
-                            <h1 className="title_page mb-0">Đăng nhập tài khoản</h1>
-                            <p className="mb-0">
-                                Bạn chưa có tài khoản ?{' '}
-                                <a onClick={getRegisterPage} className="btn-link-style btn-register" style={{ textDecoration: 'underline' }}>
-                                    Đăng ký tại đây
-                                </a>
-                            </p>
-                        </div>
-                        <div className="row">
-                            <div className="col-12 col-md-6 col-lg-5 offset-md-3 py-3 mx-auto">
-                                <div className="page-login">
-                                    <div id="login">
-                                        <form id="customer_login" acceptCharset="UTF-8" onSubmit={handleSubmit}>
-                                            <div className="form-signup clearfix">
-                                                <fieldset className="form-group">
-                                                    <label className={accountName.length > 0 && !isAccountNameValid ? 'label-error' : ''}>
-                                                        Tài khoản <span className="required">*</span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className={`input-default ${
-                                                            accountName.length === 0
-                                                                ? ''
-                                                                : isAccountNameValid
-                                                                    ? 'input-valid'
-                                                                    : 'input-error'
-                                                        }`}
-                                                        placeholder="Tài khoản"
-                                                        required
-                                                        value={accountName}
-                                                        onChange={(e) => setAccountName(e.target.value)}
-                                                    />
-                                                </fieldset>
-                                                <fieldset className="form-group">
-                                                    <label className={passwordError ? 'label-error' : ''}>
-                                                        Mật khẩu <span className="required">*</span>
-                                                    </label>
-                                                    <input
-                                                        type="password"
-                                                        className={`input-default ${
-                                                            password.length === 0
-                                                                ? ''
-                                                                : isPasswordValid
-                                                                    ? 'input-valid'
-                                                                    : 'input-error'
-                                                        }`}
-                                                        placeholder="Mật khẩu"
-                                                        required
-                                                        value={password}
-                                                        onChange={(e) => {
-                                                            const value = e.target.value;
-                                                            setPassword(value);
-                                                            const error = validatePassword(value);
-                                                            setPasswordError(error);
-                                                        }}
-                                                    />
-                                                    {passwordError && (
-                                                        <div className="error-message">{passwordError}</div>
-                                                    )}
-                                                    <small className="d-block my-2">
-                                                        Quên mật khẩu? Nhấn vào
-                                                        <a onClick={getForgotPasswordPage} className="btn-link-style text-primary">
-                                                            {' '}
-                                                            đây{' '}
-                                                        </a>
-                                                    </small>
-                                                </fieldset>
-                                                <div className="pull-xs-left button_bottom a-center mb-3">
-                                                    <button className="btn btn-block btn-style btn-login" type="submit">
-                                                        Đăng nhập
-                                                    </button>
-                                                    {error && <div style={{ color: 'red' }}>{error}</div>}
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div className="block social-login--facebooks margin-top-20 text-center">
-                                    <p className="a-center text-secondary">Hoặc đăng nhập bằng</p>
-                                    <a onClick={handleFacebookLogin} className="social-login--facebook">
-                                        <img
-                                            style={{ marginRight: '5px', borderRadius: '5px' }}
-                                            width="129px"
-                                            height="37px"
-                                            alt="facebook-login-button"
-                                            src="//bizweb.dktcdn.net/assets/admin/images/login/fb-btn.svg"
-                                        />
-                                    </a>
-                                    <a onClick={handleGoogleLogin} className="social-login--google">
-                                        <img
-                                            style={{ marginLeft: '5px', borderRadius: '5px' }}
-                                            width="129px"
-                                            height="37px"
-                                            alt="google-login-button"
-                                            src="//bizweb.dktcdn.net/assets/admin/images/login/gp-btn.svg"
-                                        />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+        <div className="login-container">
+            <div className="login-card">
+                <h2 className="login-title">Đăng nhập</h2>
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        className={`input-default ${accountNameError ? 'input-error' : ''}`}
+                        placeholder={"Tên tài khoản"}
+                        value={accountName}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setAccountName(value);
+                            if (value.trim() === '') {
+                                setAccountNameError('Vui lòng điền vào mục này');
+                            } else {
+                                setAccountNameError('');
+                            }
+                        }}
+                        onBlur={() => {
+                            if (accountName.trim() === '') {
+                                setAccountNameError('Vui lòng điền vào mục này');
+                            }
+                        }}
+                    />
+                    <div className={`error-message ${accountNameError ? 'visible' : ''}`}>
+                        {accountNameError || ' '}
                     </div>
+
+                    <div style={{position: 'relative'}}>
+                        <input
+                            type={showPassword ? 'text' : 'password'}
+                            className={`input-default ${passwordError ? 'input-error' : ''}`}
+                            value={password}
+                            placeholder={"Mật khẩu"}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setPassword(value);
+                                if (value.trim() === '') {
+                                    setPasswordError('Vui lòng điền vào mục này');
+                                } else {
+                                    setPasswordError('');
+                                }
+                            }}
+                            onBlur={() => {
+                                if (password.trim() === '') {
+                                    setPasswordError('Vui lòng điền vào mục này');
+                                }
+                            }}
+                            style={{paddingRight: '40px'}}
+                        />
+                        <FontAwesomeIcon
+                            icon={showPassword ? faEyeSlash : faEye}
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '40%',
+                                transform: 'translateY(-50%)',
+                                cursor: 'pointer',
+                                color: '#666',
+                                fontSize: '18px'
+                            }}
+                        />
+                    </div>
+                    <div className={`error-message ${passwordError ? 'visible' : ''}`}>
+                        {passwordError || ' '}
+                    </div>
+                    <button type="submit">Đăng nhập</button>
+                    <div className="login-error-message">
+                        {error || ' '}
+                    </div>
+
+                    <div>
+                        <small className="forgot-password-text">
+                            <a onClick={getForgotPasswordPage} className="btn-link-style text-primary">
+                                Quên mật khẩu?
+                            </a>
+                        </small>
+                    </div>
+                </form>
+
+                <div className="or-separator">
+                    <span>Hoặc</span>
                 </div>
-            </section>
-        </>
+
+                <div
+                    className="block social-login--facebooks text-center"
+                    style={{marginBottom: '25px'}}
+                >
+                    <button onClick={handleFacebookLogin} className="social-btn">
+                        <img
+                            src="https://cdn-icons-png.flaticon.com/512/124/124010.png"
+                            alt="Facebook"
+                        />
+                        Facebook
+                    </button>
+                    <button
+                        onClick={handleGoogleLogin}
+                        className="social-btn"
+                        style={{ marginLeft: '10px' }}
+                    >
+                        <img
+                            src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
+                            alt="Google"
+                        />
+                        Google
+                    </button>
+                </div>
+
+                <p className="register-text">
+                    Bạn chưa có tài khoản?
+                    <a onClick={getRegisterPage} className="btn-link-style btn-register"
+                       style={{ textDecoration: 'underline' }}>
+                        Đăng ký
+                    </a>
+                </p>
+            </div>
+        </div>
     );
 };
 
