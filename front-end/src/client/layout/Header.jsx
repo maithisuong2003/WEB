@@ -131,20 +131,7 @@ const Header = () => {
 
   return (
     <div>
-      <div className="top-banner position-relative" style={{ background: '#a50a06' }}>
-        <div className="container text-center px-0">
-          <a className="position-relative  d-sm-none d-block" style={{ maxHeight: '78px', height: 'calc( 78 * 100vw /828 )' }} onClick={getProduct} title="Khuyến mãi">
-            <img className="img-fluid position-absolute " src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/top_banner_mb.jpg?1704435927037" style={{ left: 0 }} alt="Khuyến mãi" width="828" height="78" />
-          </a>
-          <a className="position-relative d-sm-block d-none " style={{ maxHeight: '44px', height: 'calc(44 * 100vw /1200)' }} onClick={getProduct} title="Khuyến mãi">
-            <picture>
-              <source media="(max-width: 480px)" srcSet="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/top_banner.jpg?1704435927037" />
-              <img className="img-fluid position-absolute" src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/top_banner.jpg?1704435927037" style={{ left: 0 }} alt="Khuyến mãi" width="1200" height="44" />
-            </picture>
-          </a>
-          <button type="button" className="close " aria-label="Close">✕</button>
-        </div>
-      </div>
+
       <header className="header header_menu">
         {mobileMenu && (
           <div id="mobile-menu" className="scroll active" ref={mobileMenuRef}>
@@ -208,7 +195,8 @@ const Header = () => {
             </div>
           </div>
         )}
-        <div className="mid-header wid_100 d-flex align-items-center">
+        <div className="mid-header wid_100 d-flex align-items-center"
+             style={{'--header-background': 'rgba(255,255,255,0.04)', '--header-color': '#1c1616'}}>
           <div className="container">
             <div className="row align-items-center position-relative">
               <div className=' col-12 header-main'>
@@ -253,7 +241,7 @@ const Header = () => {
                         <a onClick={getOrders} className='d-block text-center' title="Đơn hàng">
                           <img loading="lazy"
                             src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/order-icon.png?1704435927037"
-                            width="24" height="24" className="align-self-center" alt="order-icon" />
+                            width="24" height="24" className="align-self-center" alt="order-icon" style={{ filter: 'brightness(0) saturate(100%)' }}/>
                           <span className='d-none d-xl-block mt-1'>
                             Đơn hàng
                           </span>
@@ -264,7 +252,7 @@ const Header = () => {
                           title="Hệ thống cửa hàng">
                           <img loading="lazy"
                             src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/address-icon.png?1704435927037"
-                            width="24" height="24" className="align-self-center" alt="phone-icon" />
+                            width="24" height="24" className="align-self-center" alt="phone-icon" style={{ filter: 'brightness(0) saturate(100%)' }} />
                           <span className='d-none d-xl-block mt-1'>
                             Cửa hàng
                           </span>
@@ -284,6 +272,7 @@ const Header = () => {
                               height="24"
                               alt="account_icon"
                               className="align-self-center"
+                              style={{ filter: 'brightness(0) saturate(100%)' }}
                             />
                             {checkPermission && (
                               <i onClick={() => getAdmin()} className="fa fa-cog" aria-hidden="true" title="Truy cập vào quản trị viên"></i>
@@ -304,7 +293,7 @@ const Header = () => {
                             <div className="cart-icon">
                               <img loading="lazy"
                                 src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/cart-icon.png?1704435927037"
-                                width="24" height="24" alt="cart_icon" />
+                                width="24" height="24" alt="cart_icon" style={{ filter: 'brightness(0) saturate(100%)' }}/>
                               <span className="count_item count_item_pr">{cartTotal}</span>
                             </div>
                             <span className='d-xl-block d-none mt-1'>Giỏ hàng</span>
@@ -355,7 +344,10 @@ const Header = () => {
           </div>
         </div>
       </header>
-      <div className="sub-header d-lg-block d-none" style={{ '--header-background': '#2d2d2d', '--header-color': '#ffffff' }}>
+      <div className="sub-header d-lg-block d-none" style={{
+        '--header-background': 'linear-gradient(90deg, #12947f, #5fc89d)'
+        , '--header-color': '#ffffff'
+      }}>
         <div className="container">
           <div className="navigation--horizontal d-md-flex align-items-center d-none">
             <div className=" navigation-horizontal-wrapper ">

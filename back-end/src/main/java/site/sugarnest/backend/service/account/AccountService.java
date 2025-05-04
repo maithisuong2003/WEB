@@ -35,7 +35,9 @@ public class AccountService implements IAccountService {
     private IAccountRepository iAccountRepository;
     private IAccountMapper iAccountMapper;
     private EmailService emailService;
+
     private ITokenRepository tokenRepository;
+
     IRoleRepository roleRepository;
 
 
@@ -63,12 +65,18 @@ public class AccountService implements IAccountService {
         String verificationCode = UUID.randomUUID().toString();
         accountEntity.setVerificationCode(passwordEncoder.encode(verificationCode));
         emailService.sendMail(accountDto.getEmail(), "Xác thực email", verificationCode);
-
         iAccountRepository.save(accountEntity);
-
         iAccountMapper.mapToAccountDto(accountEntity);
     }
 
+    @Override
+    public AccountResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        String accountName = context.getAuthentication().getName();
+        AccountEntity accountEntity = iAccountRepository.findByAccountName(accountName)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXITED));
+        return iAccountMapper.mapToAccountDto(accountEntity);
+    }
 
     //    @PreAuthorize("hasAuthority('ACCOUNTS_PUT')")
     @Override
@@ -99,42 +107,6 @@ public class AccountService implements IAccountService {
         accountEntity.setIsActive(accountDto.getIsActive());
         accountEntity.setUpdateAt();
 
-        iAccountRepository.save(accountEntity);
-    }
-
-    public void editMyAccount(AccountRequest accountDto) {
-        var context = SecurityContextHolder.getContext();
-        String accountName = context.getAuthentication().getName();
-        AccountEntity accountEntity = iAccountRepository.findByAccountName(accountName)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXITED));
-        accountEntity.setFullName(accountDto.getFullName());
-        accountEntity.setPhone(accountDto.getPhone());
-        accountEntity.setAddress(accountDto.getAddress());
-        accountEntity.setBirthday(accountDto.getBirthday());
-        System.out.println(accountDto.getBirthday());
-        accountEntity.setAddress(accountDto.getAddress());
-        accountEntity.setIsActive(accountDto.getIsActive());
-        accountEntity.setUpdateAt();
-
-        iAccountRepository.save(accountEntity);
-    }
-
-    public void editMyPassword(PasswordChangeRequest passwordChangeRequest) {
-        String password = passwordChangeRequest.getOldPassword();
-        String newPassword = passwordChangeRequest.getNewPassword();
-
-        var context = SecurityContextHolder.getContext();
-        String accountName = context.getAuthentication().getName();
-        AccountEntity accountEntity = iAccountRepository.findByAccountName(accountName)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXITED));
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        boolean matchesPass = passwordEncoder.matches(password, accountEntity.getPassword());
-        if (!matchesPass) {
-            throw new AppException(ErrorCode.PASSWORD_NOT_MATCHED);
-        }
-        accountEntity.setPassword(passwordEncoder.encode(newPassword));
-        accountEntity.setCurrentPassword(passwordEncoder.encode(newPassword));
-        accountEntity.setUpdateAt();
         iAccountRepository.save(accountEntity);
     }
 
@@ -187,31 +159,4 @@ public class AccountService implements IAccountService {
         return iAccountRepository.findByEmail(email).isPresent();
     }
 
-    @Override
-    public void deleteAccount(Long id) {
-        AccountEntity accountEntity = iAccountRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXITED));
-        accountEntity.setIsDelete("true");
-        accountEntity.setUpdateAt();
-        iAccountRepository.save(accountEntity);
-    }
-
-    @Override
-    public AccountEntity getAccount() {
-        var context = SecurityContextHolder.getContext();
-        String accountName = context.getAuthentication().getName();
-        return iAccountRepository.findByAccountName(accountName).orElseThrow(() -> new RuntimeException("Account not found"));
-    }
-    @Override
-    public Long totalAccount() {
-        return iAccountRepository.count();
-    }
-
-    @Override
-    public List<AccountResponse> getNewAccounts(int limit) {
-        Pageable pageable = PageRequest.of(0, limit);
-        List<AccountEntity> accountEntities = iAccountRepository.findNewAccounts(pageable);
-        accountEntities.removeIf(accountEntity -> accountEntity.getAccountName().equals("admin"));
-        return accountEntities.stream().map(iAccountMapper::mapToAccountDto).toList();
-    }
 }

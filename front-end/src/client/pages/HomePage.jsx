@@ -50,7 +50,12 @@ const HomePage = () => {
         <div className='row'>
           <div className="col-lg-3 d-lg-block d-none">
             <div className="subheader">
-              <div className="toogle-nav-wrapper nav-index ">
+              <div
+                  className="toogle-nav-wrapper nav-index"
+                  style={{
+                    background: 'linear-gradient(90deg, #12947f, #5fc89d)'
+                  }}
+              >
                 <div className="icon-bar btn menu-bar mr-2 p-0 d-inline-flex">
                   <span className="bar"></span>
                   <span className="bar"></span>

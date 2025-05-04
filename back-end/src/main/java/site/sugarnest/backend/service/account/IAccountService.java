@@ -25,11 +25,7 @@ public interface IAccountService {
     AccountResponse getMyInfo();
 
     boolean checkExistedEmail(String email);
+    AccountResponse getMyInfo();
 
-    void deleteAccount(Long id);
-
-    AccountEntity getAccount();
-    Long totalAccount();
-    List<AccountResponse> getNewAccounts(int limit);
 
 }

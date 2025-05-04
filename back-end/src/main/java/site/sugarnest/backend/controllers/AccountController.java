@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import site.sugarnest.backend.dto.request.AccountRequest;
+
 import site.sugarnest.backend.dto.request.EmailExistResquest;
 import site.sugarnest.backend.dto.request.PasswordResetRequest;
+
 import site.sugarnest.backend.dto.response.AccountResponse;
 import site.sugarnest.backend.dto.response.ApiResponse;
 import site.sugarnest.backend.service.account.IAccountService;
@@ -28,34 +30,6 @@ public class AccountController {
         return ApiResponse.<String>builder()
                 .code(200)
                 .message("Please enter your verification code")
-                .build();
-    }
-
-    @PutMapping("edit/{id}")
-    @PreAuthorize("hasAuthority('ACCOUNTS_PUT')")
-    public ApiResponse<String> editAccount(@PathVariable Long id, @RequestBody AccountRequest accountDto) {
-        iAccountService.editAccount(id, accountDto);
-        return ApiResponse.<String>builder()
-                .code(200)
-                .message("Success")
-                .build();
-    }
-
-    @PutMapping("edit")
-    public ApiResponse<String> editMyAccount(@RequestBody AccountRequest accountDto) {
-        iAccountService.editMyAccount(accountDto);
-        return ApiResponse.<String>builder()
-                .code(200)
-                .message("Success")
-                .build();
-    }
-
-    @PutMapping("edit/password")
-    public ApiResponse<String> editMyPassword(@RequestBody PasswordChangeRequest passwordChangeRequest) {
-        iAccountService.editMyPassword(passwordChangeRequest);
-        return ApiResponse.<String>builder()
-                .code(200)
-                .message("Success")
                 .build();
     }
 
@@ -96,6 +70,7 @@ public class AccountController {
                 .result(iAccountService.getMyInfo())
                 .build();
     }
+
 
     @PostMapping("/checkEmail")
     public ApiResponse<String> checkExistedEmail(@RequestBody EmailExistResquest emailExistRequest) {
