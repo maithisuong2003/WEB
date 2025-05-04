@@ -32,6 +32,7 @@ public class AccountService implements IAccountService {
 
     private IAccountRepository iAccountRepository;
     private IAccountMapper iAccountMapper;
+    private EmailService emailService;
 
     IRoleRepository roleRepository;
 
@@ -56,15 +57,21 @@ public class AccountService implements IAccountService {
         accountEntity.setRoles(new HashSet<>(Collections.singletonList(roleRepository.findById(PredefinedRole.USER_ROLE)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXITED)))));
 
-/*        String verificationCode = UUID.randomUUID().toString();
+        String verificationCode = UUID.randomUUID().toString();
         accountEntity.setVerificationCode(passwordEncoder.encode(verificationCode));
-        emailService.sendMail(accountDto.getEmail(), "Xác thực email", verificationCode);*/
-
+        emailService.sendMail(accountDto.getEmail(), "Xác thực email", verificationCode);
         iAccountRepository.save(accountEntity);
-
         iAccountMapper.mapToAccountDto(accountEntity);
     }
 
+    @Override
+    public AccountResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        String accountName = context.getAuthentication().getName();
+        AccountEntity accountEntity = iAccountRepository.findByAccountName(accountName)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXITED));
+        return iAccountMapper.mapToAccountDto(accountEntity);
+    }
 
 
     @Override

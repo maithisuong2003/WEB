@@ -90,10 +90,24 @@ const SearchBar = () => {
                     placeholder="Bạn cần tìm gì?"
                     value={searchQuery}
                     onChange={handleInputChange}
+                    style={{
+                        border: '1px solid gray',
+                        borderTopLeftRadius: '30px',
+                        borderBottomLeftRadius: '30px',
+                        borderRight: 'none',
+                    }}
                 />
-                <input type="hidden" name="type" />
+                <input type="hidden" name="type"/>
                 <span className="input-group-btn btn-action">
-                    <button type="submit" aria-label="search" className="btn text-white icon-fallback-text h-100">
+                    <button type="submit" aria-label="search" className="btn text-white icon-fallback-text h-100"
+                            style={{
+                                backgroundColor: '#19b0ab',
+                                border: '1px solid #19b0ab',
+                                borderTopRightRadius: '30px',
+                                borderBottomRightRadius: '30px',
+                                borderLeft: 'none',
+                                padding: '0 16px',
+                            }}>
                         <i className="fa fa-search" aria-hidden="true"></i>
                     </button>
                 </span>
@@ -102,11 +116,11 @@ const SearchBar = () => {
             {showResults && (
                 <div className="card search-results-card" ref={searchResultsRef}>
                     <div className="card-header d-flex justify-content-between align-items-center">
-                        <strong style={{ color: 'black' }}>
+                        <strong style={{color: 'black'}}>
                             Kết quả tìm kiếm cho <span className="text-danger">{searchQuery}</span>
                         </strong>
                     </div>
-                    <div className="card-body overflow-auto" style={{ maxHeight: '300px' }}>
+                    <div className="card-body overflow-auto" style={{maxHeight: '300px'}}>
                         {results.length > 0 ? (
                             results.map((item) => (
                                 <a
@@ -119,7 +133,7 @@ const SearchBar = () => {
                                             src={item.imageProductEntity[0].image}
                                             alt={item.nameProduct}
                                             className="img-fluid"
-                                            style={{ width: '70px', height: '70px', objectFit: 'cover' }}
+                                            style={{width: '70px', height: '70px', objectFit: 'cover' }}
                                         />
                                     </div>
                                     <div className="flex-grow-1 ms-3">

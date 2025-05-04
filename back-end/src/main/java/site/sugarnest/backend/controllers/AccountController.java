@@ -3,6 +3,7 @@ package site.sugarnest.backend.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import site.sugarnest.backend.dto.request.AccountRequest;
+import site.sugarnest.backend.dto.response.AccountResponse;
 import site.sugarnest.backend.dto.response.ApiResponse;
 import site.sugarnest.backend.service.account.IAccountService;
 
@@ -21,6 +22,15 @@ public class AccountController {
         return ApiResponse.<String>builder()
                 .code(200)
                 .message("Please enter your verification code")
+                .build();
+    }
+
+    @GetMapping("/myInfo")
+    public ApiResponse<AccountResponse> getMyInfo() {
+        return ApiResponse.<AccountResponse>builder()
+                .code(200)
+                .message("Success")
+                .result(iAccountService.getMyInfo())
                 .build();
     }
 

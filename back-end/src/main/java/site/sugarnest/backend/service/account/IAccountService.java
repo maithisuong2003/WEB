@@ -9,6 +9,6 @@ import java.util.List;
 public interface IAccountService {
     void createAccount(AccountRequest accountDto);
     boolean checkExistedEmail(String email);
-
+    AccountResponse getMyInfo();
 
 }
