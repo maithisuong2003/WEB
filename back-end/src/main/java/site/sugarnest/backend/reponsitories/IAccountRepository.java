@@ -15,8 +15,14 @@ public interface IAccountRepository extends JpaRepository<AccountEntity, Long> {
 
     Optional<AccountEntity> findByEmail(String email);
 
+    Optional<AccountEntity> findByPhone(String phone);
+
+    Optional<AccountEntity> findByVerificationCode(String verificationCode);
+
     Optional<AccountEntity> findByAccountName(String accountName);
     @Query("SELECT a FROM AccountEntity a LEFT JOIN FETCH a.roles r LEFT JOIN FETCH r.permissions WHERE a.email = :email")
     AccountEntity findByEmailWithRolesAndPermissions(@Param("email") String email);
 
+    @Query("SELECT a FROM AccountEntity a ORDER BY a.id DESC")
+    List<AccountEntity> findNewAccounts(Pageable pageable);
 }
