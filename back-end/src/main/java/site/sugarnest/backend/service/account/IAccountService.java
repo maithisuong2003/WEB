@@ -25,7 +25,8 @@ public interface IAccountService {
     AccountResponse getMyInfo();
 
     boolean checkExistedEmail(String email);
-    AccountResponse getMyInfo();
+    boolean checkExistedAccount(String accountName);
+
 
 
 }

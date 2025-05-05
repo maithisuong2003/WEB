@@ -99,7 +99,9 @@
     font-size: 14px;
     color: #333;
 }
-
+input.invalid {
+    border: 1px solid red;
+}
 .register-text .btn-link-style {
     margin-left: 5px;
     color: #007bff;

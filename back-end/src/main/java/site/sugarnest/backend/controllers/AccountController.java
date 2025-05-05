@@ -3,8 +3,8 @@ package site.sugarnest.backend.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import site.sugarnest.backend.dto.request.AccountExistRequest;
 import site.sugarnest.backend.dto.request.AccountRequest;
-
 import site.sugarnest.backend.dto.request.EmailExistResquest;
 import site.sugarnest.backend.dto.request.PasswordResetRequest;
 
@@ -42,26 +42,6 @@ public class AccountController {
                 .build();
     }
 
-    @GetMapping("/all")
-    @PreAuthorize("hasAuthority('ACCOUNTS_GET')")
-    public ApiResponse<List<AccountResponse>> getAllAccount() {
-        return ApiResponse.<List<AccountResponse>>builder()
-                .code(200)
-                .message("Success")
-                .result(iAccountService.findAll())
-                .build();
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ACCOUNTS_GET')")
-    public ApiResponse<AccountResponse> getAccountById(@PathVariable Long id) {
-        return ApiResponse.<AccountResponse>builder()
-                .code(200)
-                .message("Success")
-                .result(iAccountService.findById(id))
-                .build();
-    }
-
     @GetMapping("/myInfo")
     public ApiResponse<AccountResponse> getMyInfo() {
         return ApiResponse.<AccountResponse>builder()
@@ -70,7 +50,20 @@ public class AccountController {
                 .result(iAccountService.getMyInfo())
                 .build();
     }
-
+    @PostMapping("/checkAccountName")
+    public ApiResponse<String> checkExistedAccount(@RequestBody AccountExistRequest accountExistRequest) {
+        if (iAccountService.checkExistedAccount(accountExistRequest.getAccountName())) {
+            return ApiResponse.<String>builder()
+                    .code(200)
+                    .result("true")
+                    .build();
+        } else {
+            return ApiResponse.<String>builder()
+                    .code(404)
+                    .result("false")
+                    .build();
+        }
+    }
 
     @PostMapping("/checkEmail")
     public ApiResponse<String> checkExistedEmail(@RequestBody EmailExistResquest emailExistRequest) {
@@ -87,35 +80,4 @@ public class AccountController {
         }
 
     }
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ACCOUNTS_DELETE')")
-    public ApiResponse<String> deleteAccount(@PathVariable Long id) {
-        iAccountService.deleteAccount(id);
-        return ApiResponse.<String>builder()
-                .code(200)
-                .message("Success")
-                .build();
-    }
-
-    @GetMapping("/new-accounts/{limit}")
-    @PreAuthorize("hasAuthority('ACCOUNTS_GET')")
-    public ApiResponse<List<AccountResponse>> getNewAccounts(@PathVariable int limit) {
-        return ApiResponse.<List<AccountResponse>>builder()
-                .code(200)
-                .message("Success")
-                .result(iAccountService.getNewAccounts(limit))
-                .build();
-    }
-
-    @GetMapping("/total")
-    @PreAuthorize("hasAuthority('ACCOUNTS_GET')")
-    public ApiResponse<Long> getTotalAccount() {
-        return ApiResponse.<Long>builder()
-                .code(200)
-                .message("Success")
-                .result(iAccountService.totalAccount())
-                .build();
-    }
-
 }
-

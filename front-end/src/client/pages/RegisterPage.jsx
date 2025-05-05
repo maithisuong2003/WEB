@@ -19,6 +19,9 @@ const RegisterPage = () => {
         phone: '',
         repassword: '',
         accountNameClass: '',
+        fullNameClass:'',
+        birthdayClass: '',
+        addressClass: '',
         emailClass: '',
         phoneClass: '',
         passwordClass: '',
@@ -55,11 +58,48 @@ const RegisterPage = () => {
                     if (!accountNameRegex.test(value)) {
                         errorMessage = 'Tên tài khoản không được chứa khoảng cách hoặc dấu.';
                         validationClass = 'invalid';
+
+                        setErrors(prevErrors => ({
+                            ...prevErrors,
+                            accountName: errorMessage
+                        }));
+                        setFormData(prevFormData => ({
+                            ...prevFormData,
+                            accountNameClass: validationClass
+                        }));
                     } else {
-                        validationClass = 'valid';
+                        // Kiểm tra trùng tên tài khoản từ server
+                        axios.post(`${REST_API_BASE_URL}/account/checkAccountName`, { accountName: value })
+                            .then(response => {
+                                if (response.data.code === 200) {
+                                    // Tên tài khoản đã tồn tại
+                                    setErrors(prevErrors => ({
+                                        ...prevErrors,
+                                        accountName: 'Tên tài khoản đã tồn tại.'
+                                    }));
+                                    setFormData(prevFormData => ({
+                                        ...prevFormData,
+                                        accountNameClass: 'invalid'
+                                    }));
+                                } else {
+                                    // Tên tài khoản hợp lệ
+                                    setErrors(prevErrors => ({
+                                        ...prevErrors,
+                                        accountName: ''
+                                    }));
+                                    setFormData(prevFormData => ({
+                                        ...prevFormData,
+                                        accountNameClass: 'valid'
+                                    }));
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Lỗi khi kiểm tra tên tài khoản:", error);
+                            });
                     }
                     break;
                 }
+
                 case 'email': {
                     const emailRegex = /^[\w.-]+@([\w-]+\.)+[a-zA-Z]{2,}$/;
                     if (!emailRegex.test(value)) {
@@ -116,7 +156,6 @@ const RegisterPage = () => {
             }
         }
 
-        // Cập nhật formData và lỗi
         setFormData(prevData => ({
             ...prevData,
             [name]: value,
@@ -176,8 +215,11 @@ const RegisterPage = () => {
                                     icon: 'success',
                                     title: 'Đăng ký thành công',
                                     text: 'Tài khoản của bạn đã được xác thực!'
+                                }).then(() => {
+                                    navigate('/login'); // 👉 Điều hướng sang trang đăng nhập
                                 });
                             })
+
                             .catch(verifyError => {
                                 console.error('Error verifying code:', verifyError);
                                 Swal.fire({
@@ -230,6 +272,7 @@ const RegisterPage = () => {
                         value={formData.accountName}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        className={formData.accountNameClass}
 
                     />
                     <div className={`error-message ${errors.accountName ? 'visible' : ''}`}>
@@ -245,6 +288,8 @@ const RegisterPage = () => {
                         value={formData.fullName}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        className={formData.fullNameClass}
+
                     />
                     <div className={`error-message ${errors.fullName ? 'visible' : ''}`}>
                         {errors.fullName || ' '}
@@ -259,6 +304,7 @@ const RegisterPage = () => {
                         value={formData.email}
                         onBlur={handleBlur}
                         onChange={handleChange}
+                        className={formData.emailClass}
                     />
                     <div className={`error-message ${errors.email ? 'visible' : ''}`}>
                         {errors.email || ' '}
@@ -273,6 +319,7 @@ const RegisterPage = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         required
+                        className={formData.birthdayClass}
                     />
                     <div className={`error-message ${errors.birthday ? 'visible' : ''}`}>
                         {errors.birthday || ' '}
@@ -287,6 +334,7 @@ const RegisterPage = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        className={formData.phoneClass}
                     />
                     <div className={`error-message ${errors.phone ? 'visible' : ''}`}>
                         {errors.phone || ' '}
@@ -301,6 +349,7 @@ const RegisterPage = () => {
                         value={formData.password}
                         onBlur={handleBlur}
                         onChange={handleChange}
+                        className={formData.passwordClass}
                     />
                     <FontAwesomeIcon
                         icon={showPassword ? faEyeSlash : faEye}
@@ -321,6 +370,7 @@ const RegisterPage = () => {
                         value={formData.repassword}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        className={formData.repasswordClass}
                     />
                     <FontAwesomeIcon
                         icon={showRepassword ? faEyeSlash : faEye}
