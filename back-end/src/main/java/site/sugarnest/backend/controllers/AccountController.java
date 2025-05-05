@@ -1,13 +1,19 @@
 package site.sugarnest.backend.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import site.sugarnest.backend.dto.request.AccountExistRequest;
 import site.sugarnest.backend.dto.request.AccountRequest;
 import site.sugarnest.backend.dto.request.EmailExistResquest;
+import site.sugarnest.backend.dto.request.PasswordResetRequest;
+
 import site.sugarnest.backend.dto.response.AccountResponse;
 import site.sugarnest.backend.dto.response.ApiResponse;
 import site.sugarnest.backend.service.account.IAccountService;
+import site.sugarnest.backend.dto.dto.PasswordChangeRequest;
+
+import java.util.List;
 
 
 @CrossOrigin("*")
@@ -24,6 +30,15 @@ public class AccountController {
         return ApiResponse.<String>builder()
                 .code(200)
                 .message("Please enter your verification code")
+                .build();
+    }
+
+    @PutMapping("/resetPassword")
+    public ApiResponse<String> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
+        iAccountService.resetPassword(passwordResetRequest.getToken(), passwordResetRequest.getNewPassword());
+        return ApiResponse.<String>builder()
+                .code(200)
+                .message("Success")
                 .build();
     }
 
