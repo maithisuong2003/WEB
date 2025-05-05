@@ -78,5 +78,7 @@ public class AccountService implements IAccountService {
     public boolean checkExistedEmail(String email) {
         return iAccountRepository.findByEmail(email).isPresent();
     }
+    @Override
+    public boolean checkExistedAccount(String accountName){ return iAccountRepository.findByAccountName(accountName).isPresent();}
 
 }
