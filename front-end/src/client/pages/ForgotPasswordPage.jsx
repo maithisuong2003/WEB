@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { REST_API_BASE_URL } from '../services/ProductService.js';
+import '../assets/css/FogotPasswordPage.css';
 
 const ForgotPasswordPage = () => {
     const navigate = useNavigate();
@@ -18,86 +19,48 @@ const ForgotPasswordPage = () => {
                 .catch(err => {
                     console.log(err);
                 })
-            Swal.fire('Thành công', 'Email khôi phục mật khẩu đã được gửi', 'success');
+            Swal.fire('ThĂ nh cĂ´ng', 'Email khĂ´i phá»¥c máº­t kháº©u Ä‘Ă£ Ä‘Æ°á»£c gá»­i', 'success');
         } catch (error) {
-            Swal.fire('Thành công', 'Email khôi phục mật khẩu đã được gửi', 'success');
+            Swal.fire('ThĂ nh cĂ´ng', 'Email khĂ´i phá»¥c máº­t kháº©u Ä‘Ă£ Ä‘Æ°á»£c gá»­i', 'success');
         }
     };
 
-    const handleFacebookLogin = () => {
-        window.location.href = `${REST_API_BASE_URL}/oauth2/authorization/facebook`;
-    };
-
-    const handleGoogleLogin = () => {
-        window.location.href = `${REST_API_BASE_URL}/oauth2/authorization/google`;
-    };
-
     return (
-        <section className="section">
-            <div className="container margin-bottom-20 card py-20">
-                <div className="wrap_background_aside margin-bottom-40 page_login">
-                    <div className="heading-bar text-center">
-                        <h1 className="title_page mb-0">Đăng nhập tài khoản</h1>
-                        <p className="mb-0">
-                            Bạn chưa có tài khoản ?
-                            <a
-                                onClick={() => navigate('/register')}
-                                className="btn-link-style btn-register"
-                                style={{ textDecoration: "underline" }}
-                            >
-                                {" "}
-                                Đăng ký tại đây
-                            </a>
-                        </p>
-                    </div>
-                    <div className="row">
-                        <div className="col-12 col-md-6 col-lg-5 offset-md-3 py-3 mx-auto">
-                            <div className="page-login ">
-                                <div id="recover-password" style={{ display: "block" }} className="form-signup page-login text-center">
-                                    <h2>Đặt lại mật khẩu</h2>
-                                    <p>
-                                        Chúng tôi sẽ gửi cho bạn một email để kích hoạt việc đặt lại mật khẩu.
-                                    </p>
-                                    <form onSubmit={handleSubmit} id="recover_customer_password" acceptCharset="UTF-8">
-                                        <div className="form-signup" style={{ color: "red" }}></div>
-                                        <div className="form-signup clearfix">
-                                            <fieldset className="form-group">
-                                                <input
-                                                    type="email"
-                                                    className="form-control form-control-lg"
-                                                    value={email}
-                                                    onChange={(e) => setEmail(e.target.value)}
-                                                    placeholder="Email"
-                                                    required
-                                                />
-                                            </fieldset>
-                                        </div>
-                                        <div className="action_bottom my-3">
-                                            <button className="btn btn-style btn-recover btn-block" type="submit">
-                                                Lấy lại mật khẩu
-                                            </button>
-                                            <a className="btn btn-style link btn-style-active" onClick={() => navigate('/login')}>
-                                                Quay lại
-                                            </a>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div className="block social-login--facebooks margin-top-20 text-center">
-                                <p className="a-center text-secondary">Hoặc đăng nhập bằng</p>
-                                <a onClick={handleFacebookLogin} className="social-login--facebook">
-                                    <img style={{ marginRight: '5px', borderRadius: '5px' }} width="129px" height="37px" alt="facebook-login-button" src="//bizweb.dktcdn.net/assets/admin/images/login/fb-btn.svg" />
-                                </a>
-                                <a onClick={handleGoogleLogin} className="social-login--google">
-                                    <img style={{ marginLeft: '5px', borderRadius: '5px' }} width="129px" height="37px" alt="google-login-button" src="//bizweb.dktcdn.net/assets/admin/images/login/gp-btn.svg" />
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+        <div className="login-container">
+            <div className="forgot-card">
+                <div style={{position: 'relative', marginBottom: '20px'}}>
+                    <span onClick={() => navigate('/login')} style={{position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#19b0ab', fontSize: '35px',}}>&#8592;</span>
+                    <h2 className="login-title" style={{margin: 0, textAlign: 'center',}}>
+                        Äáº·t láº¡i máº­t kháº©u
+                    </h2>
                 </div>
+
+
+                <form className="login-form" onSubmit={handleSubmit} id="recover_customer_password"
+                      acceptCharset="UTF-8">
+                    <input
+                        type="email"
+                        className="input-default"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        required
+                    />
+                    <button type="submit">Gá»­i</button>
+
+
+                </form>
+                <div style={{marginTop: "30px"}}>
+                    <p>ChĂºng tĂ´i sáº½ gá»­i cho báº¡n má»™t email Ä‘á»ƒ kĂ­ch hoáº¡t viá»‡c Ä‘áº·t láº¡i máº­t kháº©u.</p>
+                </div>
+
+
             </div>
-        </section>
-    )
-}
+        </div>
+    );
+};
 
 export default ForgotPasswordPage;
+
+
+
