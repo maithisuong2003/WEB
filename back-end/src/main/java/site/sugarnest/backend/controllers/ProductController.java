@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import site.sugarnest.backend.dto.dto.ProductDto;
 import site.sugarnest.backend.dto.dto.ProductFilterDto;
+import site.sugarnest.backend.dto.response.ApiResponse;
 import site.sugarnest.backend.service.product.IProductService;
 
 import java.util.List;
@@ -29,10 +30,22 @@ public class ProductController {
             @RequestParam(defaultValue = "ASC") String sortDirection) {
 
         ProductFilterDto filter = new ProductFilterDto();
+        filter.setMinPrice(minPrice);
+        filter.setMaxPrice(maxPrice);
+        filter.setSuppliers(suppliers);
         filter.setCategories(categories);
+        filter.setSortBy(sortBy);
+        filter.setSortDirection(sortDirection);
 
         Pageable pageable = PageRequest.of(page, size);
         return iProductService.getAllProduct(pageable, filter);
     }
-
+    @GetMapping("/{id}")
+    public ApiResponse<ProductDto> getProductById(@PathVariable("id") Long id) {
+        ProductDto productDto = iProductService.getProductById(id);
+        return ApiResponse.<ProductDto>builder()
+                .message("Success")
+                .result(productDto)
+                .build();
+    }
 }

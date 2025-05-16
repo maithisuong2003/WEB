@@ -13,7 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductFilterDto {
 
+    private Double minPrice;
+    private Double maxPrice;
+    private List<String> suppliers;
     private List<String> categories;
+    private String sortBy;
+    private String sortDirection;
 
 }
 
