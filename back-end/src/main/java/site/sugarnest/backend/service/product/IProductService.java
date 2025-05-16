@@ -12,6 +12,7 @@ public interface IProductService {
     Page<ProductDto> getAllProduct(Pageable pageable);
 
     Page<ProductDto> getAllProduct(Pageable pageable, ProductFilterDto filter);
+    ProductDto getProductById(Long productId);
 
 }
 
