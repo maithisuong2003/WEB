@@ -114,22 +114,16 @@ const ProductsPage = () => {
             <div className='collection_banner mb-3 container text-center'>
                 <a className="banner" title="Tất cả sản phẩm">
                     <picture>
-                        <source media="(min-width: 768px)"
-                            srcSet="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/collection_main_banner.jpg?1704435927037"
-                            data-srcset="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/collection_main_banner.jpg?1704435927037" />
-                        <source media="(max-width: 767px)"
-                            srcSet="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/collection_main_banner.jpg?1704435927037"
-                            data-srcset="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/collection_main_banner.jpg?1704435927037" />
-                        <img className=' img-fluid'
-                            src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/collection_main_banner.jpg?1704435927037"
-                            loading="lazy" width="1200" height="200" alt="Tất cả sản phẩm" />
+                        <img
+                            src="https://res.cloudinary.com/dhqv00way/image/upload/v1747673281/4_fxglcq.jpg"
+                            loading="lazy" width="1200" alt="Tất cả sản phẩm"/>
                     </picture>
                 </a>
             </div>
             <div className="section mb-3">
                 <div className='container'>
                     <link rel="preload" as='style' type="text/css"
-                        href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon.css?1704435927037" />
+                          href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon.css?1704435927037" />
 
                     <link rel="stylesheet" href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon.css?1704435927037" />
                     <div className="section_coupons">

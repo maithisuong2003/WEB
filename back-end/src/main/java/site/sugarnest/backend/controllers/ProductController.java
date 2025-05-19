@@ -40,6 +40,17 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, size);
         return iProductService.getAllProduct(pageable, filter);
     }
+    @GetMapping("/search/{nameProduct}")
+    public ApiResponse<Page<ProductDto>> searchProduct(
+            @PathVariable("nameProduct") String nameProduct,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        Page<ProductDto> productDtos = iProductService.searchProduct(nameProduct, page, size);
+        return ApiResponse.<Page<ProductDto>>builder()
+                .message("Success")
+                .result(productDtos)
+                .build();
+    }
     @GetMapping("/{id}")
     public ApiResponse<ProductDto> getProductById(@PathVariable("id") Long id) {
         ProductDto productDto = iProductService.getProductById(id);
