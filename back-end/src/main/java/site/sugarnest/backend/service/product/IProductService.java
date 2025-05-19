@@ -13,6 +13,7 @@ public interface IProductService {
 
     Page<ProductDto> getAllProduct(Pageable pageable, ProductFilterDto filter);
     ProductDto getProductById(Long productId);
+    Page<ProductDto> searchProduct(String nameProduct, int page, int size);
 
 }
 

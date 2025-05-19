@@ -53,7 +53,7 @@ const HomePage = () => {
               <div
                   className="toogle-nav-wrapper nav-index"
                   style={{
-                    background: 'linear-gradient(90deg, #12947f, #5fc89d)'
+                    background: 'linear-gradient(90deg, #0f659b,#5fb3ea)'
                   }}
               >
                 <div className="icon-bar btn menu-bar mr-2 p-0 d-inline-flex">
@@ -63,22 +63,22 @@ const HomePage = () => {
                 </div>
                 <strong>DANH MỤC SẢN PHẨM</strong>
               </div>
-              <Sidebar />
+              <Sidebar/>
             </div>
           </div>
           <div className="col-lg-9 col-12 pl-xl-0">
             <section className="section section_slider awe-section-1 mt-2 dis_slider">
-              <div className="section_slider clearfix" style={{ maxHeight: '371px' }}>
+            <div className="section_slider clearfix" style={{ maxHeight: '371px' }}>
                 <div className="home-slider">
                   <Slider {...settingsForMainCarousel}>
                     <div className="items text-center">
                       <a onClick={() => getListProduct()} title="Sản phẩm nổi bật">
                         <picture>
                           <source media="(max-width: 480px)"
-                            srcSet="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/slider_1.jpg?1704435927037" />
+                                  srcSet="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/slider_1.jpg?1704435927037"/>
                           <img className=" img-fluid mx-auto"
-                            src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/slider_1.jpg?1704435927037"
-                            width="913" height="371" alt="Sản phẩm nổi bật" />
+                               src="https://res.cloudinary.com/dhqv00way/image/upload/v1747672736/2_wihpr9.jpg"
+                               width="913" height="371" alt="Sản phẩm nổi bật"/>
                         </picture>
                       </a>
                     </div>
@@ -86,25 +86,36 @@ const HomePage = () => {
                       <a onClick={() => getListProduct()} title="Khuyến mãi lớn chào xuân">
                         <picture>
                           <source media="(max-width: 480px)"
-                            srcSet="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/slider_2.jpg?1704435927037" />
+                                  srcSet="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/slider_2.jpg?1704435927037"/>
                           <img className=" img-fluid mx-auto" loading="lazy"
-                            src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/slider_2.jpg?1704435927037"
-                            width="913" height="371" alt="Khuyến mãi lớn chào xuân" />
+                               src="https://res.cloudinary.com/dhqv00way/image/upload/v1747672738/1_qt9cup.jpg"
+                               width="913" height="371" alt="Khuyến mãi lớn chào xuân"/>
+                        </picture>
+                      </a>
+                    </div>
+                    <div className="items text-center">
+                      <a onClick={() => getListProduct()} title="Khuyến mãi lớn chào xuân">
+                        <picture>
+                          <source media="(max-width: 480px)"
+                                  srcSet="//bizweb.dktcdn.net/thumb/large/100/419/628/themes/897067/assets/slider_2.jpg?1704435927037"/>
+                          <img className=" img-fluid mx-auto" loading="lazy"
+                               src="https://res.cloudinary.com/dhqv00way/image/upload/v1747672736/3_oryz40.jpg"
+                               width="913" height="371" alt="Khuyến mãi lớn chào xuân"/>
                         </picture>
                       </a>
                     </div>
                   </Slider>
                 </div>
-              </div>
+            </div>
             </section>
             <section className="section section_coupons awe-section-2">
               <link rel="preload" as='style' type="text/css"
-                href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon.css?1704435927037" />
+                    href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon.css?1704435927037"/>
               <link rel="stylesheet"
-                href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon.css?1704435927037" />
+                    href="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon.css?1704435927037"/>
               <div className="section_coupons">
                 <div className="container">
-                  <Coupon />
+                  <Coupon/>
                 </div>
               </div>
             </section>
