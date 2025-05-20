@@ -9,8 +9,31 @@ const SearchResults = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    useEffect(() => {
+        fetchProducts();
+    }, [search, currentPage]);
 
+    const fetchProducts = async () => {
+        if (search) {
+            try {
+                const response = await axios.get(`${REST_API_BASE_URL}/products/search/${encodeURIComponent(search)}`, {
+                    params: {
+                        page: currentPage - 1,
+                        size: 12,
+                    },
+                });
+                const data = response.data;
+                setProducts(data.result.content);
+                setTotalPages(data.result.totalPages);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        }
+    };
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
     return (
         <section className="signup section search-main wrap_background background_white">
             <div className="container py-3 mb-4">
@@ -45,12 +68,12 @@ const SearchResults = () => {
                                             )}
                                             {[...Array(totalPages)].map((_, i) => (
                                                 <li key={i} className={currentPage === i + 1 ? "active page-item disabled" : "page-item"}>
-                                                    <button className="page-link"> </button>
+                                                    <button className="page-link" onClick={() => handlePageChange(i + 1)}>{i + 1}</button>
                                                 </li>
                                             ))}
                                             {currentPage !== totalPages && (
                                                 <li className="page-item">
-                                                    <button className="page-link" ><i className="fa fa-angle-right" aria-hidden="true"></i></button>
+                                                    <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}><i className="fa fa-angle-right" aria-hidden="true"></i></button>
                                                 </li>
                                             )}
                                         </ul>
