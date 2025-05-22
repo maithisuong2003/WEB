@@ -72,7 +72,7 @@ const MyPayPalButton = ({ total, currency, orderData, token, updateCart, descrip
             .then(response => response.text())
             .then(result => {
               if (result.includes('Payment successful')) {
-                axios.post('http://localhost:8080/sugarnest/v0.1/orders', orderDataRef.current, {
+                axios.post('http://localhost:8080/latopshop/v0.1/orders', orderDataRef.current, {
                   headers: {
                     "Authorization": `Bearer ${token}`
                   }
