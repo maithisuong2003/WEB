@@ -57,9 +57,10 @@ file:
 SIGNER_KEY: Ls0Xqw3hOsUSFeHJ6QQNFtsFXmbcIpCay4gqTORtO89WHZyOYgdnSs0aiQKe2otd
 
 paypal:
-  client-id: Abo90Wztq8vanhzw0EO5zMhum7b1O6aI_1x4BTA8v7jqNIOGdthWxF-ZZpjhtEGg6CW0VWRdgg_hjdlb
-  client-secret: EEpPKUqIRD0gJPVKHVai84Yi0lauKUq3brqUN2AYkeIq1GHGbBJy_fA_q3bvj8Ha7cFZByFGKRvYyzro
+  client-id: ARpim4ec-DFFNBFDn8AOzHYR-KN4_sjy8L5k3knSpZKyArMZoIsWbden9iTai_3lMY4wlY4BVxB5UnVT
+  client-secret: ED5EK0yGyZLgCNtMnhRujsg5ESCmd3Rv2krMmVILlWRh3FLw_sZnGMJOyUXHXlLfAZUNsojRVkf0u0iY
   mode: sandbox
+
 
 log:
   formatDate: yyyy-MM-dd
