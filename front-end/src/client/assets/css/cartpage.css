@@ -267,7 +267,7 @@
 	}
 }
 @media(max-width: 767px){
-	
+
 }
 .product-name, .product-name a {
 	font-size: 14px;
@@ -697,4 +697,17 @@ button.increase.items-count.btn-plus.btn{
 	.toggle-delivery {
 		font-size: 10px;
 	}
+<style>
+.checkout-form-container {
+	background-color: #ffffff;
+	border-radius: 8px;
+	padding: 20px;
+	margin-top: 20px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+	.form-label {
+		font-weight: 500;
+	}
+</style>
 }
