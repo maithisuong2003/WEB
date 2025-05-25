@@ -7,7 +7,7 @@ import site.sugarnest.backend.dto.request.PermissionRequest;
 import site.sugarnest.backend.dto.response.PermissionResponse;
 import site.sugarnest.backend.entities.PermissionEntity;
 import site.sugarnest.backend.mapper.IPermissionMapper;
-import site.sugarnest.backend.reponsitoties.IPermissionRepository;
+import site.sugarnest.backend.reponsitories.IPermissionRepository;
 
 import java.util.List;
 

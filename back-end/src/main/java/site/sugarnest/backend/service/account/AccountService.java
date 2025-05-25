@@ -31,6 +31,15 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class AccountService implements IAccountService {
+    @Override
+    public void editMyAccount(AccountRequest accountDto) {
+
+    }
+
+    @Override
+    public void editMyPassword(PasswordChangeRequest passwordChangeRequest) {
+
+    }
 
     private IAccountRepository iAccountRepository;
     private IAccountMapper iAccountMapper;
@@ -145,14 +154,6 @@ public class AccountService implements IAccountService {
         return iAccountMapper.mapToAccountDto(accountEntity);
     }
 
-    @Override
-    public AccountResponse getMyInfo() {
-        var context = SecurityContextHolder.getContext();
-        String accountName = context.getAuthentication().getName();
-        AccountEntity accountEntity = iAccountRepository.findByAccountName(accountName)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXITED));
-        return iAccountMapper.mapToAccountDto(accountEntity);
-    }
 
     @Override
     public boolean checkExistedEmail(String email) {
