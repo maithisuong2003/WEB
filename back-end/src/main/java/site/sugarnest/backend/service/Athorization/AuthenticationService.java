@@ -22,8 +22,8 @@ import site.sugarnest.backend.entities.AccountEntity;
 import site.sugarnest.backend.entities.InvalidatedTokenEntity;
 import site.sugarnest.backend.exception.AppException;
 import site.sugarnest.backend.exception.ErrorCode;
-import site.sugarnest.backend.reponsitoties.IAccountRepository;
-import site.sugarnest.backend.reponsitoties.InvalidatedTokenRepository;
+import site.sugarnest.backend.reponsitories.IAccountRepository;
+import site.sugarnest.backend.reponsitories.InvalidatedTokenRepository;
 
 import java.text.ParseException;
 import java.time.Instant;

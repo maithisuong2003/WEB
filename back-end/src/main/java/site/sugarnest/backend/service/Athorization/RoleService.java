@@ -9,8 +9,8 @@ import site.sugarnest.backend.dto.response.RoleResponse;
 import site.sugarnest.backend.exception.AppException;
 import site.sugarnest.backend.exception.ErrorCode;
 import site.sugarnest.backend.mapper.IRoleMapper;
-import site.sugarnest.backend.reponsitoties.IPermissionRepository;
-import site.sugarnest.backend.reponsitoties.IRoleRepository;
+import site.sugarnest.backend.reponsitories.IPermissionRepository;
+import site.sugarnest.backend.reponsitories.IRoleRepository;
 
 import java.util.HashSet;
 import java.util.List;
