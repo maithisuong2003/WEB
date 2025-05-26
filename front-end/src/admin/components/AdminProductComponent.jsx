@@ -2,62 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Space, Badge } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import Swal from 'sweetalert2';
-import axios from 'axios';
 import ReusableTableComponent from './ReusableTableComponent';
 import EmlementButtonComponent from './EmlementButtonComponent';
 import AppTitleComponent from './AppTitleComponent';
-import { REST_API_BASE_URL } from '../service/AdminService';
 
 const AdminProductComponent = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const token = localStorage.getItem('token');
 
 
-
-  useEffect(() => {
-    axios.get(`${REST_API_BASE_URL}/products/all`)
-      .then(response => {
-        if (response.data.code === 0) {
-          setData(response.data.result.map(item => {
-            const sizeColors = item.sizeColorProductsEntity
-              .map(sizeColor => {
-                const color = sizeColor.color ? sizeColor.color : '';
-                const size = sizeColor.size ? sizeColor.size : '';
-                return `${color}/${size}`;
-              })
-              .join(', ');
-
-            const prices = item.sizeColorProductsEntity
-              .map(sizeColor => sizeColor.listPrice ? sizeColor.listPrice : '')
-              .join(', ');
-
-            const discounts = item.sizeColorProductsEntity
-              .map(sizeColor => sizeColor.discount ? sizeColor.discount : '')
-              .join(', ');
-
-            return {
-              key: item.id,
-              productCode: item.id,
-              productName: item.nameProduct,
-              description: item.description,
-              supplier: item.supplierEntity.nameSupplier,
-              producer: item.producerEntity.nameProducer,
-              category: item.categoryEntity.nameCategory,
-              status: item.status,
-              sizeColor: sizeColors,
-              price: prices,
-              discount: discounts,
-              image: item.imageProductEntity[0]?.image || '',
-            };
-          }));
-        }
-      })
-      .catch(error => {
-        console.error("There was an error fetching the data!", error);
-      });
-  }, []);
 
 
   const getAddProduct = () => {
@@ -65,33 +17,6 @@ const AdminProductComponent = () => {
   };
   function getEditProduct(id) {
     navigate(`/admin/edit-product/${id}`);
-  };
-  const handleDelete = (key) => {
-    Swal.fire({
-      title: 'Bạn có chắc không?',
-      text: "Bạn sẽ không thể khôi phục điều này!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Vâng, xóa nó đi!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios.delete(`${REST_API_BASE_URL}/products/${key}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        })
-          .then(() => {
-            Swal.fire('Đã xóa!', 'Sản phẩm của bạn đã bị xóa.', 'success');
-            setData(data.filter(item => item.key !== key));
-          })
-          .catch(error => {
-            console.error('Xóa không thành công:', error);
-            Swal.fire('Lỗi!', 'Có lỗi xảy ra khi xóa tệp.', 'error');
-          });
-      }
-    });
   };
 
   const columns = [

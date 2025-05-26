@@ -1,61 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import OrderChart from '../util/OrderChart'
 import RevenueChart from '../util/RevenueChart'
-import axios from 'axios'
-import { REST_API_BASE_URL } from '../service/AdminService';
+
 import RevenuePieChart from '../util/RevenuePieChart';
 const AdminHomePage = () => {
-    const token = localStorage.getItem('token');
-    const [totalAccount, setTotalAccount] = useState(0);
-    const [totalProduct, setTotalProduct] = useState(0);
-    const [totalOrder, setTotalOrder] = useState(0);
-    const [outOfStock, setOutOfStock] = useState([]);
-    const [newCustomers, setNewCustomers] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [
-                    outOfStockResponse,
-                    totalAccountResponse,
-                    totalProductResponse,
-                    totalOrderResponse,
-                    newCustomersResponse
-                ] = await Promise.all([
-                    axios.get(`${REST_API_BASE_URL}/products/out-of-stock/4`, {
-                        headers: { "Authorization": `Bearer ${token}` }
-                    }),
-                    axios.get(`${REST_API_BASE_URL}/account/total`, {
-                        headers: { "Authorization": `Bearer ${token}` }
-                    }),
-                    axios.get(`${REST_API_BASE_URL}/products/total`, {
-                        headers: { "Authorization": `Bearer ${token}` }
-                    }),
-                    axios.get(`${REST_API_BASE_URL}/orders/total`, {
-                        headers: { "Authorization": `Bearer ${token}` }
-                    }),
-                    axios.get(`${REST_API_BASE_URL}/account/new-accounts/5`, {
-                        headers: { "Authorization": `Bearer ${token}` }
-                    })
-                ]);
-
-                const sortedOutOfStock = outOfStockResponse.data.result.sort((a, b) => {
-                    return a.sizeColorProductsEntity[0].inventoryEntity.quantity - b.sizeColorProductsEntity[0].inventoryEntity.quantity;
-                });
-
-                setOutOfStock(sortedOutOfStock);
-                    setTotalAccount(totalAccountResponse.data.result);
-                setTotalProduct(totalProductResponse.data.result);
-                setTotalOrder(totalOrderResponse.data.result);
-                setNewCustomers(newCustomersResponse.data.result);
-            } catch (error) {
-                console.error("There was an error fetching the data!", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
     return (
         <main className="app-content">
             <div className="row">
