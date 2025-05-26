@@ -1,0 +1,168 @@
+.coupon-container {
+    padding: 20px;
+    background: #f1f2f5;
+}
+
+.coupon-input-wrapper {
+    position: relative;
+    width: 200px;
+}
+
+.coupon-label {
+    color: #1c1616;
+    margin: 0 10px 0 0;
+}
+
+.coupon-input {
+    padding: 8px;
+    padding-right: 30px;
+    border: 1px solid #ced4da;
+    border-radius: 1px;
+    font-size: 14px;
+    width: 100%;
+    background-color: #fff;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+.coupon-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.coupon-apply-btn {
+    padding: 0 15px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    color: #6c757d;
+    font-size: 14px;
+    text-align: center;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.coupon-apply-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.coupon-error {
+    color: #dc3545;
+    font-size: 14px;
+    margin: 5px 0 0 0;
+}
+
+.promotion-card {
+    cursor: pointer;
+    position: relative;
+    border-radius: 8px;
+    background-color: #fff;
+    margin-bottom: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgb(187, 181, 181);
+    transition: background-color 0.3s ease;
+}
+
+.promotion-card:hover {
+    background-color: #ffebe6;
+}
+
+.promotion-card.selected {
+    background-color: #ffd1c2;
+}
+
+.promotion-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -15px;
+    width: 15px;
+    height: 100%;
+    background-color: #ff8c61;
+    z-index: 1;
+}
+
+.promotion-card-body {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+.promotion-logo {
+    width: 100px;
+    height: 100px;
+    background-color: #ff5722;
+    background-image: url('https://res.cloudinary.com/dhqv00way/image/upload/v1748293941/coupon_l4pwcr.png');
+    background-size: 40% 40%;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.promotion-info {
+    flex: 1;
+    padding: 5px 10px;
+}
+
+.promotion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.promotion-header-text {
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.promotion-quantity {
+    color: #ff8c61;
+    font-size: 12px;
+    background-color: #fff0e6;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.promotion-details {
+    color: #000;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.promotion-expiry {
+    color: #6c757d;
+    font-size: 12px;
+    margin-bottom: 0;
+}
+
+.promotion-subtext {
+    color: #ff5722;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+}

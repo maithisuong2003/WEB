@@ -33,6 +33,9 @@ public enum ErrorCode {
     RATE_NOT_EXITED(1023, "Rate Not Exited", HttpStatus.NOT_FOUND),
     RATE_EDIT_LIMIT(1024, "Rate Edit Limit", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN(1025, "Invalid Token", HttpStatus.BAD_REQUEST),
+    ACCOUNT_NOT_FOUND(1003, "Tài khoản không tồn tại",HttpStatus.BAD_REQUEST),
+
+    PROMOTION_ALREADY_SAVED(1003, "Tài khoản không tồn tại",HttpStatus.BAD_REQUEST);
 
     ;
 

@@ -6,19 +6,23 @@ import { useCart } from '../context/CartContext.jsx';
 import MyPayPalButton from '../util/MyPayPalButton.jsx';
 import { REST_API_BASE_URL } from '../services/ProductService.js';
 import Swal from 'sweetalert2';
-
-
+import { Modal, Button } from 'react-bootstrap';
+import '../assets/css/voucher.css';
 const CartPage = () => {
    const navigate = useNavigate();
    const [cart, setCart] = useState([]);
    const [cartItems, setCartItems] = useState([]);
-   const { user, token } = useAuth();
-   const { updateCart } = useCart();
+   const {user, token} = useAuth();
+   const {updateCart} = useCart();
    const [note, setNote] = useState('');
    const [deliveryAt, setDeliveryAt] = useState('');
    const [address, setAddress] = useState('');
    const [isFormComplete, setIsFormComplete] = useState(false);
-
+   const [savedPromotions, setSavedPromotions] = useState([]);
+   const [showPromotions, setShowPromotions] = useState(false);
+   const [selectedPromotion, setSelectedPromotion] = useState(null);
+   const [manualCode, setManualCode] = useState(''); // State cho mã nhập thủ công
+   const [errorMessage, setErrorMessage] = useState(''); // State cho thông báo lỗi
 
    const [orderData, setOrderData] = useState({
       address: '',
@@ -27,12 +31,19 @@ const CartPage = () => {
       sale: ''
    });
 
+
+   // Xử lý thay đổi giá trị các ô nhập liệu
    const handleInputChange = (e) => {
       const { id, value } = e.target;
+      setOrderData((prev) => ({ ...prev, [id]: value }));
       if (id === 'note') setNote(value);
       if (id === 'datepicker') setDeliveryAt(value);
       if (id === 'address') setAddress(value);
    };
+   // Kiểm tra xem form đã hoàn thiện chưa
+   useEffect(() => {
+      setIsFormComplete(address && deliveryAt);
+   }, [address, deliveryAt]);
 
    useEffect(() => {
       const orderData = {
@@ -183,6 +194,71 @@ const CartPage = () => {
       const dd = String(today.getDate()).padStart(2, '0');
       setMinDate(`${yyyy}-${mm}-${dd}`);
    }, []);
+   // Lấy danh sách mã giảm giá đã lưu từ API
+   useEffect(() => {
+      if (user && token) {
+         axios
+             .get(`${REST_API_BASE_URL}/promotion/saved?accountId=${user.id}`, {
+                headers: {
+                   Authorization: `Bearer ${token}`,
+                },
+             })
+             .then((response) => {
+                const data = response.data;
+                if (data.code === 200 && Array.isArray(data.result)) {
+                   setSavedPromotions(data.result);
+                } else {
+                   console.warn('Không lấy được danh sách mã đã lưu:', data.message);
+                }
+             })
+             .catch((error) => {
+                console.error('Lỗi khi lấy danh sách mã đã lưu:', error);
+                Swal.fire({
+                   icon: 'error',
+                   title: 'Lỗi',
+                   text: 'Không thể tải danh sách mã giảm giá. Vui lòng thử lại!',
+                });
+             });
+      }
+   }, [user, token]);
+   // Xử lý khi chọn mã giảm giá
+   const handleSelectPromotion = (promotion) => {
+      setSelectedPromotion(promotion);
+      setOrderData((prev) => ({ ...prev, sale: promotion.code }));
+      setShowPromotions(false);
+      Swal.fire({
+         icon: 'success',
+         title: 'Áp dụng mã thành công',
+         text: `Mã ${promotion.code} đã được áp dụng!`,
+      });
+   };
+
+   const handleDeselectPromotion = () => {
+      setSelectedPromotion(null);
+      setOrderData((prev) => ({ ...prev, sale: '' }));
+   };
+
+   const handleApplyManualCode = () => {
+      const promotion = savedPromotions.find(
+          (promo) => promo.code.toLowerCase() === manualCode.toLowerCase() && isPromotionValid(promo)
+      );
+      if (promotion) {
+         handleSelectPromotion(promotion);
+         setManualCode('');
+         setErrorMessage(''); // Xóa thông báo lỗi nếu mã hợp lệ
+      } else {
+         setErrorMessage('Rất tiếc! Không thể tìm thấy mã voucher này.'); // Hiển thị thông báo lỗi
+      }
+   };
+   // Tính giá cuối cùng sau khi áp dụng mã giảm giá
+   const finalPrice = selectedPromotion
+       ? selectedPromotion.percentageDiscount
+           ? parseInt(cart.totalPrice) * (1 - selectedPromotion.percentageDiscount / 100)
+           : parseInt(cart.totalPrice) - parseInt(selectedPromotion.fixedDiscount)
+       : parseInt(cart.totalPrice);
+
+   // Kiểm tra mã giảm giá còn hiệu lực không
+   const isPromotionValid = (promotion) => new Date(promotion.endTime) > new Date();
 
    return (
        <section className="main-cart-page main-container col1-layout mobile-tab active" id="cart-tab" data-title="Giỏ hàng">
@@ -254,7 +330,8 @@ const CartPage = () => {
                           <div className="header-cart-price">
                              <div className="timedeli-modal">
                                 <div className="timedeli-modal-content">
-                                   <button type="button" className="close window-close d-sm-none" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                   <button type="button" className="close window-close d-sm-none" aria-label="Close">
+                                      <span aria-hidden="true">×</span></button>
                                    <div className="timedeli d-sm-block">
                                       <div className="checkout-form-container p-3 bg-light rounded shadow-sm">
                                          <h4 className="mb-3 font-weight-bold text-primary">Thông tin giao hàng</h4>
@@ -301,7 +378,8 @@ const CartPage = () => {
                                             />
                                          </div>
                                          <div className="form-group mb-3">
-                                            <label htmlFor="note" className="form-label">Ghi chú đơn hàng (nếu có)</label>
+                                            <label htmlFor="note" className="form-label">Ghi chú đơn hàng (nếu
+                                               có)</label>
                                             <textarea
                                                 id="note"
                                                 rows="3"
@@ -329,33 +407,146 @@ const CartPage = () => {
                                          {parseInt(cart.totalPrice).toLocaleString('it-IT')}₫
                                       </div>
                                    </div>
-                                   <div className="total-line total-line--shipping-fee d-sm-flex justify-content-between">
+                                   <div
+                                       className="total-line total-line--shipping-fee d-sm-flex justify-content-between">
                                       <div className="total-line__name">
                                          <strong>Phí vận chuyển</strong>
                                       </div>
                                       <div className="total-line__price">
-                                         <span className="origin-price" data-bind="getTextShippingPriceOriginal()"></span>
+                                         <span className="origin-price"
+                                               data-bind="getTextShippingPriceOriginal()"></span>
                                          <span data-bind="getTextShippingPriceFinal()">40.000₫</span>
                                       </div>
                                    </div>
+                                   {selectedPromotion && (
+                                       <div
+                                           className="total-line total-line--discount d-sm-flex justify-content-between">
+                                          <div className="total-line__name">
+                                             <strong>Mã giảm giá ({selectedPromotion.code})</strong>
+                                             <button className="btn btn-link text-danger p-0 ms-2"
+                                                     onClick={handleDeselectPromotion}>
+                                                (Xóa)
+                                             </button>
+                                          </div>
+                                          <div className="total-line__price">
+                                             {selectedPromotion.percentageDiscount
+                                                 ? `-${selectedPromotion.percentageDiscount}%`
+                                                 : `-${parseInt(selectedPromotion.fixedDiscount).toLocaleString('it-IT')}₫`}
+                                          </div>
+                                       </div>
+                                   )}
                                 </div>
                              </div>
                              <div className="title-cart d-none d-sm-flex ">
                                 <h3 className="text-xs-left">TỔNG CỘNG</h3>
-                                <span className="text-xs-right  totals_price_mobile">{parseInt(cart.totalPrice).toLocaleString('it-IT')}₫</span>
+                                <span className="text-xs-right totals_price_mobile">
+                                 {parseInt(finalPrice).toLocaleString('it-IT')}₫
+                              </span>
                                 <i className="text-xs-right price_vat ">(Đã bao gồm VAT nếu có)</i>
                              </div>
                              <div className="coupon-toggle d-flex justify-content-between align-items-center">
                                 <div>
-                                   <img className="mr-1" src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon-icon.png?1704435927037" alt="delivery" />
+                                   <img className="mr-1"
+                                        src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon-icon.png?1704435927037"
+                                        alt="delivery"/>
                                    <span>Mã giảm giá</span>
                                 </div>
                                 <div className="coupon-toggle-btn">
-                                   <span className="mr-1">Chọn mã giảm giá</span>
+                                 <span className="mr-1" onClick={() => setShowPromotions(true)}
+                                       style={{cursor: 'pointer'}}>
+                                    Chọn mã giảm giá
+                                 </span>
                                 </div>
                              </div>
+                             <Modal show={showPromotions} onHide={() => setShowPromotions(false)} centered>
+                                <Modal.Header>
+                                   <Modal.Title>Ưu đãi dành riêng cho bạn</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                                   <div className="coupon-container">
+                                      <div className="d-flex align-items-center" style={{ gap: '10px' }}>
+                                         <label className="coupon-label">Mã Voucher</label>
+                                         <div className="coupon-input-wrapper">
+                                            <input
+                                                type="text"
+                                                placeholder="Nhập mã giảm giá"
+                                                value={manualCode}
+                                                onChange={(e) => {
+                                                   setManualCode(e.target.value);
+                                                   setErrorMessage('');
+                                                }}
+                                                className="coupon-input"
+                                            />
+                                            {manualCode && (
+                                                <span
+                                                    onClick={() => {
+                                                       setManualCode('');
+                                                       setErrorMessage('');
+                                                    }}
+                                                    className="coupon-clear" > ×</span>
+                                            )}
+                                         </div>
+                                         <Button
+                                             variant="primary"
+                                             onClick={handleApplyManualCode}
+                                             disabled={!manualCode.trim()}
+                                             className="coupon-apply-btn"
+                                         >
+                                            Áp dụng
+                                         </Button>
+                                      </div>
+                                      {errorMessage && (
+                                          <p className="coupon-error">
+                                             {errorMessage}
+                                          </p>
+                                      )}
+                                   </div>
+                                   {savedPromotions.filter(isPromotionValid).length > 0 ? (
+                                       <div>
+                                          {savedPromotions.filter(isPromotionValid).map((promotion) => (
+                                              <div
+                                                  key={promotion.id}
+                                                  className={`promotion-card ${selectedPromotion && selectedPromotion.id === promotion.id ? 'selected' : ''}`}
+                                                  onClick={() => handleSelectPromotion(promotion)}
+                                              >
+                                                 <div className="promotion-card-body">
+                                                    <div className="promotion-logo"></div>
+                                                    <div className="promotion-info">
+                                                       <div className="promotion-header">
+                           <span className="promotion-header-text"> Giảm  {promotion.percentageDiscount}% Giảm tối đa
+                              {promotion.fixedDiscount ? ` ${(promotion.fixedDiscount / 1000).toLocaleString('it-IT')}k ` : ''}
+                           </span>
+                                                          <span className="promotion-quantity">x{promotion.quantity || 6}</span>
+                                                       </div>
+                                                       <div className="promotion-details">
+                                                          {`₫${(promotion.minOrder || 90000).toLocaleString('it-IT')} Đơn Tối Thiểu ₫${(promotion.fixedDiscount || 0).toLocaleString('it-IT')}`}
+                                                       </div>
+                                                       <div className="promotion-expiry">
+                                                          Đang hiệu lực - HSD: {new Date(promotion.endTime).toLocaleDateString('vi-VN')}
+                                                       </div>
+                                                    </div>
+                                                 </div>
+                                              </div>
+                                          ))}
+                                       </div>
+                                   ) : (
+                                       <p className="text-center">Không có mã giảm giá nào còn hiệu lực.</p>
+                                   )}
+                                </Modal.Body>
+                                <Modal.Footer className="justify-content-center">
+                                   <Button
+                                       variant="secondary"
+                                       onClick={() => setShowPromotions(false)}
+                                       style={{ backgroundColor: '#ff5722', color: 'white' }}
+                                   >
+                                      Đóng
+                                   </Button>
+                                </Modal.Footer>
+                             </Modal>
+
                              <div className="checkout d-none d-sm-block">
-                                <button className="btn btn-block btn-proceed-checkout-mobile" title="Tiến hành thanh toán" type="button" onClick={handleCheckout}>
+                                <button className="btn btn-block btn-proceed-checkout-mobile"
+                                        title="Tiến hành thanh toán" type="button" onClick={handleCheckout}>
                                    <span>Thanh Toán</span>
                                 </button>
                              </div>
@@ -365,7 +556,9 @@ const CartPage = () => {
                               </span>
                                 <div className="trustbadge">
                                    <a target="_blank" title="Phương thức thanh toán">
-                                      <img className=" img-fluid" src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/footer_trustbadge.jpg?1704435927037" alt="" width="246" height="53" />
+                                      <img className=" img-fluid"
+                                           src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/footer_trustbadge.jpg?1704435927037"
+                                           alt="" width="246" height="53"/>
                                    </a>
                                 </div>
                              </div>
@@ -379,7 +572,8 @@ const CartPage = () => {
                                      updateCart={updateCart}
                                  />
                              ) : (
-                                 <div className="text-danger">Vui lòng điền vào tất cả các trường bắt buộc để kích hoạt thanh toán PayPal.</div>
+                                 <div className="text-danger">Vui lòng điền vào tất cả các trường bắt buộc để kích hoạt
+                                    thanh toán PayPal.</div>
                              )}
                           </div>
                        </div>
@@ -390,29 +584,33 @@ const CartPage = () => {
                           <div className="title-cart text-center">
                              <h1 className="d-none">Giỏ hàng</h1>
                              <div>
-                                <img src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/cart_empty_background.png?1704435927037" className="img-fluid" width="298" height="152" />
+                                <img
+                                    src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/cart_empty_background.png?1704435927037"
+                                    className="img-fluid" width="298" height="152"/>
                              </div>
                              <h3>
                                 "Hổng” có gì trong giỏ hết
                              </h3>
-                             <p>	Về trang cửa hàng để chọn mua sản phẩm bạn nhé!!</p>
+                             <p> Về trang cửa hàng để chọn mua sản phẩm bạn nhé!!</p>
                              <a onClick={getHomePage} title="Mua sắm ngay" className="btn btn-main">Mua sắm ngay</a>
                           </div>
                        </div>
                     </div>
                 )}
              </div>
-             <div className="cart-empty container card border-0 py-2 " style={{ display: 'none' }}>
+             <div className="cart-empty container card border-0 py-2 " style={{display: 'none'}}>
                 <div className="alert green-alert section" role="alert">
                    <div className="title-cart text-center">
                       <h1 className="d-none">Giỏ hàng</h1>
                       <div>
-                         <img src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/cart_empty_background.png?1704435927037" className="img-fluid" width="298" height="152" />
+                         <img
+                             src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/cart_empty_background.png?1704435927037"
+                             className="img-fluid" width="298" height="152"/>
                       </div>
                       <h3>
                          Hổng có gì trong giỏ hết
                       </h3>
-                      <p>	Về trang cửa hàng để chọn mua sản phẩm bạn nhé!!</p>
+                      <p> Về trang cửa hàng để chọn mua sản phẩm bạn nhé!!</p>
                       <a title="Mua sắm ngay" className="btn btn-main">Mua sắm ngay</a>
                    </div>
                 </div>
@@ -424,3 +622,5 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
+
