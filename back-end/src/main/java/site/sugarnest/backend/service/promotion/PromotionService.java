@@ -36,19 +36,8 @@ public class PromotionService {
         return promotionEntities.stream().map(promotionMapper::mapToPromotionDto).toList();
     }
 
-    public void addProductToPromotion(Long promotionId, Long productId) {
-        Optional<PromotionEntity> promotion = promotionRepository.findById(promotionId);
-        Optional<ProductEntity> product = productRepository.findById(productId);
-
-        if (promotion.isPresent() && product.isPresent()) {
-            PromotionEntity promotionEntity = promotion.get();
-            ProductEntity productEntity = product.get();
-
-            promotionEntity.getApplicableProducts().add(productEntity);
-            promotionRepository.save(promotionEntity);
-        } else {
-            throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
-        }
+    public PromotionResponse createPromotion(PromotionRequest promotionRequest) {
+        return promotionMapper.mapToPromotionDto(promotionRepository.save(promotionMapper.mapToPromotionEntity(promotionRequest)));
     }
 
     public List<PromotionResponse> getSavedPromotions(Long accountId) {
@@ -88,27 +77,42 @@ public class PromotionService {
                 .promotionType(promotion.getPromotionType())
                 .build();
     }
-    public boolean isPromotionApplicableToProduct(Long promotionId, Long productId) {
-        Optional<PromotionEntity> promotion = promotionRepository.findById(promotionId);
-        if (promotion.isPresent()) {
-            PromotionEntity promo = promotion.get();
-            return promo.getApplicableProducts().stream().anyMatch(product -> product.getId().equals(productId));
-        }
-        return false;
-    }
 
-    public boolean isPromotionApplicableToAccount(Long promotionId, Long accountId) {
-        Optional<PromotionEntity> promotion = promotionRepository.findById(promotionId);
-        if (promotion.isPresent()) {
-            PromotionEntity promo = promotion.get();
-            return promo.getApplicableAccount().stream().anyMatch(account -> account.getId().equals(accountId));
-        }
-        return false;
-    }
+    public PromotionResponse updatePromotion(PromotionRequest promotionRequest) {
 
-    public boolean applyPromotionToOrder(Long promotionId, Long accountId, Long productId) {
-        boolean isProductApplicable = isPromotionApplicableToProduct(promotionId, productId);
-        boolean isAccountApplicable = isPromotionApplicableToAccount(promotionId, accountId);
-        return isProductApplicable && isAccountApplicable;
+        PromotionEntity promotionEntity = promotionRepository.findById(promotionRequest.getId()).orElse(null);
+        if (promotionEntity == null) {
+            throw new AppException(ErrorCode.PROMOTION_NOT_FOUND);
+        }
+        if (promotionRequest.getEndTime().before(promotionRequest.getStartTime())) {
+            throw new AppException(ErrorCode.INVALID_TIME);
+        }
+        promotionEntity.setName(promotionRequest.getName());
+        promotionEntity.setDescription(promotionRequest.getDescription());
+        promotionEntity.setCode(promotionRequest.getCode());
+        promotionEntity.setPercentageDiscount(promotionRequest.getPercentageDiscount());
+        promotionEntity.setFixedDiscount(promotionRequest.getFixedDiscount());
+        promotionEntity.setQuantity(promotionRequest.getQuantity());
+        promotionEntity.setStartTime(promotionRequest.getStartTime());
+        promotionEntity.setEndTime(promotionRequest.getEndTime());
+        promotionEntity.setStatus(promotionRequest.getStatus());
+        promotionEntity.setIsDelete(promotionRequest.getIsDelete());
+        promotionEntity.setApplicableCondition(promotionRequest.getApplicableCondition());
+        promotionEntity.setUsageLimit(promotionRequest.getUsageLimit());
+        promotionEntity.setApplicableAccount(promotionRequest.getApplicableAccount());
+        promotionEntity.setApplicableProducts(promotionRequest.getApplicableProducts());
+        promotionEntity.setPromotionType(promotionRequest.getPromotionType());
+        promotionEntity.setCreatedBy(promotionRequest.getCreatedBy());
+        return promotionMapper.mapToPromotionDto(promotionRepository.save(promotionEntity));
+
+    }
+    public void deletePromotion(Long id) {
+        promotionRepository.deleteById(id);
+    }
+    public PromotionResponse getPromotionByCode(String code) {
+        return promotionMapper.mapToPromotionDto(promotionRepository.findByCode(code));
+    }
+    public PromotionResponse getPromotionById(Long id) {
+        return promotionMapper.mapToPromotionDto(promotionRepository.findById(id).orElse(null));
     }
 }

@@ -27,6 +27,15 @@ public class PromotionController {
                 .result(promotionService.getAllPromotions())
                 .build();
     }
+    @PostMapping("/create")
+    @PreAuthorize("hasAuthority('SALES_POST')")
+    public ApiResponse<PromotionResponse> createPromotion(@RequestBody PromotionRequest promotionRequest) {
+        return ApiResponse.<PromotionResponse>builder()
+                .code(200)
+                .message("Success")
+                .result(promotionService.createPromotion(promotionRequest))
+                .build();
+    }
     @GetMapping("/saved")
     public ApiResponse<List<PromotionResponse>> getSavedPromotions(@RequestParam Long accountId) {
         return ApiResponse.<List<PromotionResponse>>builder()
@@ -44,5 +53,53 @@ public class PromotionController {
         } catch (AppException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
+    }
+    @GetMapping("/{id}")
+    public ApiResponse<PromotionResponse> getPromotionById(@PathVariable Long id) {
+        return ApiResponse.<PromotionResponse>builder()
+                .code(200)
+                .message("Success")
+                .result(promotionService.getPromotionById(id))
+                .build();
+    }
+
+    @PutMapping("/edit/{id}")
+    @PreAuthorize("hasAuthority('SALES_PUT')")
+    public ApiResponse<PromotionResponse> updatePromotion(@PathVariable Long id, @RequestBody PromotionRequest promotionRequest) {
+        promotionService.updatePromotion(promotionRequest);
+        return ApiResponse.<PromotionResponse>builder()
+                .code(200)
+                .message("Success")
+                .result(promotionService.getPromotionById(id))
+                .build();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('SALES_DELETE')")
+    public ApiResponse<String> deletePromotion(@PathVariable Long id) {
+        promotionService.deletePromotion(id);
+        return ApiResponse.<String>builder()
+                .code(200)
+                .message("Success")
+                .build();
+    }
+
+    @GetMapping("/code/{code}")
+    public  ApiResponse<PromotionResponse> getPromotionByCode(@PathVariable String code) {
+        return ApiResponse.<PromotionResponse>builder()
+                .code(200)
+                .message("Success")
+                .result(promotionService.getPromotionByCode(code))
+                .build();
+    }
+
+    @PutMapping("/add-account/{promotionId}/{accountId}")
+    @PreAuthorize("hasAuthority('SALES_PUT')")
+    public ApiResponse<String> addAccountToPromotion(@PathVariable Long promotionId, @PathVariable Long accountId) {
+        promotionService.addAccountToPromotion(promotionId, accountId);
+        return ApiResponse.<String>builder()
+                .code(200)
+                .message("Success")
+                .build();
     }
 }
