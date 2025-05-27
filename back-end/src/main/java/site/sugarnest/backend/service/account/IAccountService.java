@@ -27,6 +27,10 @@ public interface IAccountService {
     boolean checkExistedEmail(String email);
     boolean checkExistedAccount(String accountName);
 
+    void deleteAccount(Long id);
 
+    AccountEntity getAccount();
+    Long totalAccount();
+    List<AccountResponse> getNewAccounts(int limit);
 
 }
