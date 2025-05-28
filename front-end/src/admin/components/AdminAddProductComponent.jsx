@@ -1,18 +1,218 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import AppTitleComponent from './AppTitleComponent'
+import Swal from "sweetalert2";
+import axios from 'axios';
+import { REST_API_BASE_URL } from '../service/AdminService';
 
 
 const AdminAddProductComponent = () => {
     const navigate = useNavigate()
     const [productName, setProductName] = useState('');
+    const [producers, setProducers] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [suppliers, setSuppliers] = useState([]);
+
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedProducer, setSelectedProducer] = useState('');
     const [selectedSupplier, setSelectedSupplier] = useState('');
-    const [productDescription, setProductDescription] = useState('');
+    const token = localStorage.getItem('token');
     function getProductManager() {
         navigate('/admin/product-manager')
     }
+    const handleAddCategory = () => {
+        Swal.fire({
+            title: 'Nhập tên danh mục',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Lưu',
+            showLoaderOnConfirm: true,
+            preConfirm: (categoryName) => {
+                if (!categoryName) {
+                    return Promise.reject('Tên danh mục không được để trống');
+                } else {
+                    return axios.post(`${REST_API_BASE_URL}/categories/create`, {
+                        nameCategory: categoryName,
+                        isActive: true
+                    }, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    })
+                        .then(response => {
+                            if (response.status !== 200) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.data;
+                        })
+                        .catch(error => {
+                            throw new Error(`Yêu cầu thất bại: ${error}`);
+                        });
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetchCategories();
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Danh mục đã được thêm thành công',
+                    icon: 'success'
+                });
+            }
+        });
+    };
+
+    const handleAddProducer = () => {
+        Swal.fire({
+            title: 'Nhập tên nhà sản xuất',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Lưu',
+            showLoaderOnConfirm: true,
+            preConfirm: (producerName) => {
+                if (!producerName) {
+                    Swal.showValidationMessage('Tên nhà sản xuất không được để trống');
+                } else {
+                    return axios.post(`${REST_API_BASE_URL}/producers/create`, {
+                        nameProducer: producerName,
+                        isActive: "true"
+                    }, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    })
+                        .then(response => {
+                            if (response.status !== 200) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.data;
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(`Yêu cầu thất bại: ${error}`);
+                        });
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetchProducers();
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Nhà sản xuất đã được thêm thành công',
+                    icon: 'success'
+                });
+            }
+        });
+    };
+    const handleAddSupplier = () => {
+        Swal.fire({
+            title: 'Nhập tên nhà cung cấp',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Lưu',
+            showLoaderOnConfirm: true,
+            preConfirm: (supplierName) => {
+                if (!supplierName) {
+                    Swal.showValidationMessage('Tên nhà cung cấp không được để trống');
+                } else {
+                    return axios.post(`${REST_API_BASE_URL}/suppliers/create`, {
+                        nameSupplier: supplierName,
+                        isActive: "true"
+                    }, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    })
+                        .then(response => {
+                            if (response.status !== 200) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.data;
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(`Yêu cầu thất bại: ${error}`);
+                        });
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetchSuppliers();
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Nhà cung cấp đã được thêm thành công',
+                    icon: 'success'
+                });
+            }
+        });
+    };
+    const fetchCategories = () => {
+        axios.get(`${REST_API_BASE_URL}/categories/all`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    setCategories(response.data.result);
+                } else {
+                    console.error('Lỗi khi lấy danh sách danh mục:', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi lấy danh sách danh mục:', error);
+            });
+    };
+
+    const fetchProducers = () => {
+        axios.get(`${REST_API_BASE_URL}/producers/all`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    setProducers(response.data.result);
+                } else {
+                    console.error('Lỗi khi lấy danh sách nhà sản xuất:', error);
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi lấy danh sách nhà sản xuất:', error);
+            });
+    };
+    const fetchSuppliers = () => {
+        axios.get(`${REST_API_BASE_URL}/suppliers/all`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    setSuppliers(response.data.result);
+                } else {
+                    console.error('Lỗi khi lấy danh sách nhà cung cấp:', error);
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi lấy danh sách nhà cung cấp:', error);
+            });
+    };
+    useEffect(() => {
+        fetchCategories();
+        fetchProducers();
+        fetchSuppliers();
+    }, []);
 
     return (
         <main className="app-content">
