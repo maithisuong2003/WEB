@@ -14,6 +14,12 @@ public interface IProductService {
     Page<ProductDto> getAllProduct(Pageable pageable, ProductFilterDto filter);
     ProductDto getProductById(Long productId);
     Page<ProductDto> searchProduct(String nameProduct, int page, int size);
+    List<ProductDto> getProductByAdmin();
+    ProductDto createProduct(ProductDto productDto);
+    ProductDto updateProduct(Long productId, ProductDto updateProduct);
+
+    void deleteProduct(Long productId);
+    Long getTotalProducts();
 
 }
 
