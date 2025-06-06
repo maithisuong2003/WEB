@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import jakarta.persistence.*;
-import site.sugarnest.backend.entities.*;
-import site.sugarnest.backend.entities.ImageProductEntity;
-import site.sugarnest.backend.entities.ProducerEntity;
-import site.sugarnest.backend.entities.RateEntity;
-import site.sugarnest.backend.entities.SizeColorProductEntity;
-
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -42,6 +37,28 @@ public class ProductEntity {
     @JoinColumn(name = "id_categorie", nullable = false)
     private CategoryEntity categoryEntity;
 
+
+    @Column(name = "cpu")
+    private String cpu;
+
+    @Column(name = "gpu")
+    private String gpu;
+
+    @Column(name = "os")
+    private String os;
+
+    @Column(name = "weight")
+    private BigDecimal weight;
+
+    @Column(name = "ram")
+    private String ram;
+
+    @Column(name = "storage")
+    private String storage;
+
+    @Column(name = "refresh_rate")
+    private String refreshRate;
+
     private String isActive;
 
     private String isDelete;
@@ -67,4 +84,6 @@ public class ProductEntity {
     private List<OrderDetailEntity> orderDetailsEntity;
 
     private int views;
+
+
 }
