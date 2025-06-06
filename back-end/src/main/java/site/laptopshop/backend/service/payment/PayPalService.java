@@ -5,7 +5,7 @@ import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import site.sugarnest.backend.dto.request.PaymentRequest;
+import site.laptopshop.backend.dto.request.PaymentRequest;
 
 import java.util.*;
 

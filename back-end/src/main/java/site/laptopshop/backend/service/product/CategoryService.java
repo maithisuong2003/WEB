@@ -2,10 +2,10 @@ package site.laptopshop.backend.service.product;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import site.sugarnest.backend.dto.dto.CategoryDto;
-import site.sugarnest.backend.entities.CategoryEntity;
-import site.sugarnest.backend.mapper.ICategoryMapper;
-import site.sugarnest.backend.reponsitories.ICategoryRepository;
+import site.laptopshop.backend.dto.dto.CategoryDto;
+import site.laptopshop.backend.entities.CategoryEntity;
+import site.laptopshop.backend.mapper.ICategoryMapper;
+import site.laptopshop.backend.reponsitories.ICategoryRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

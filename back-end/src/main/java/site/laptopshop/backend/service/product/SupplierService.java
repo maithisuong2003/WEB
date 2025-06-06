@@ -3,10 +3,10 @@ package site.laptopshop.backend.service.product;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import site.sugarnest.backend.dto.dto.SupplierDto;
-import site.sugarnest.backend.entities.SupplierEntity;
-import site.sugarnest.backend.mapper.ISupplierMapper;
-import site.sugarnest.backend.reponsitories.ISupplierRepository;
+import site.laptopshop.backend.dto.dto.SupplierDto;
+import site.laptopshop.backend.entities.SupplierEntity;
+import site.laptopshop.backend.mapper.ISupplierMapper;
+import site.laptopshop.backend.reponsitories.ISupplierRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

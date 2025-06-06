@@ -2,12 +2,12 @@ package site.laptopshop.backend.service.product;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import site.sugarnest.backend.dto.dto.ProducerDto;
-import site.sugarnest.backend.entities.ProducerEntity;
-import site.sugarnest.backend.exception.AppException;
-import site.sugarnest.backend.exception.ErrorCode;
-import site.sugarnest.backend.mapper.IProducerMapper;
-import site.sugarnest.backend.reponsitories.IProducerRepository;
+import site.laptopshop.backend.dto.dto.ProducerDto;
+import site.laptopshop.backend.entities.ProducerEntity;
+import site.laptopshop.backend.exception.AppException;
+import site.laptopshop.backend.exception.ErrorCode;
+import site.laptopshop.backend.mapper.IProducerMapper;
+import site.laptopshop.backend.reponsitories.IProducerRepository;
 
 import java.util.List;
 @AllArgsConstructor
