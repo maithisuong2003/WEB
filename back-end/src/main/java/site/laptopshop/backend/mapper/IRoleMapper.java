@@ -2,9 +2,9 @@ package site.laptopshop.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import site.sugarnest.backend.dto.request.RoleRequest;
-import site.sugarnest.backend.dto.response.RoleResponse;
-import site.sugarnest.backend.entities.RoleEntity;
+import site.laptopshop.backend.dto.request.RoleRequest;
+import site.laptopshop.backend.dto.response.RoleResponse;
+import site.laptopshop.backend.entities.RoleEntity;
 
 @Mapper(componentModel = "spring")
 

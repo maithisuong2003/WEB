@@ -1,9 +1,9 @@
 package site.laptopshop.backend.service.account;
 
-import site.sugarnest.backend.dto.dto.PasswordChangeRequest;
-import site.sugarnest.backend.dto.request.AccountRequest;
-import site.sugarnest.backend.dto.response.AccountResponse;
-import site.sugarnest.backend.entities.AccountEntity;
+import site.laptopshop.backend.dto.dto.PasswordChangeRequest;
+import site.laptopshop.backend.dto.request.AccountRequest;
+import site.laptopshop.backend.dto.response.AccountResponse;
+import site.laptopshop.backend.entities.AccountEntity;
 
 import java.util.List;
 

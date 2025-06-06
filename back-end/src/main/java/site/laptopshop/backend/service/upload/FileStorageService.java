@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import site.sugarnest.backend.configuration.FileStorageProperties;
+import site.laptopshop.backend.configuration.FileStorageProperties;
 
 import javax.imageio.ImageIO;
 import javax.imageio.spi.IIORegistry;
