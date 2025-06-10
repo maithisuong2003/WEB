@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
@@ -13,6 +13,7 @@ import CreateModalPromotion from '../util/CreateModalPromotion';
 import { REST_API_BASE_URL } from '../service/AdminService';
 
 const AdminDiscountComponent = () => {
+    // eslint-disable-next-line no-unused-vars
     const navigate = useNavigate();
     const [data, setData] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);

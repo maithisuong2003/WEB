@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Table, Button, Space, Input, Badge, Select } from 'antd';
+import  { useState } from 'react';
+import { Table, Button, Space, Input,  Select } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 
 const { Option } = Select;
 
+// eslint-disable-next-line react/prop-types
 const ReusableTableComponent = ({ columns, data }) => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
@@ -89,6 +90,7 @@ const ReusableTableComponent = ({ columns, data }) => {
     return 0; // Default case when types are mixed or unsupported
   };
 
+  // eslint-disable-next-line react/prop-types
   const enhancedColumns = columns.map((col) => {
     const { dataIndex } = col;
     if (!col.searchable && !col.sortable) {
