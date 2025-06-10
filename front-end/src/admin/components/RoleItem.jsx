@@ -1,6 +1,10 @@
-
-import React from "react";
+import axios from "axios";
+import Swal from 'sweetalert2';
+import PropTypes from 'prop-types';
+import { REST_API_BASE_URL } from "../service/AdminService";
 const RoleItem = ({ role, fetchRoles }) => {
+    const token = localStorage.getItem('token');
+
     const groupPermissionsByCategory = (permissions) => {
         const groupedPermissions = {};
 
@@ -15,6 +19,148 @@ const RoleItem = ({ role, fetchRoles }) => {
         return groupedPermissions;
     };
     const groupedPermissions = groupPermissionsByCategory(role.permissions);
+    const handleAddPermission = async () => {
+        const permissionsResponse = await axios.get(`${REST_API_BASE_URL}/permissions`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        const permissions = permissionsResponse.data.result;
+
+        Swal.fire({
+            title: 'Thêm quyền truy cập',
+            html: `
+                <select id="permissionName" class="swal2-select">
+                    <option value="">-- Chọn quyền tồn tại --</option>
+                    ${permissions.map(permission => `<option value="${permission.name}">${permission.name}</option>`).join('')}
+                </select>
+            `,
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Thêm',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                const permissionName = document.getElementById('permissionName').value;
+                return axios.post(`${REST_API_BASE_URL}/roles/${role.name}/permissions`, { name: permissionName }, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                    .then(response => {
+                        if (response.status !== 200) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.data;
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        );
+                    });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Thêm quyền truy cập thành công',
+                        icon: 'success'
+                    });
+                    fetchRoles();
+                }
+            }
+        ).catch((error) => {
+            console.error(error);
+            Swal.fire({
+                title: 'Thêm quyền truy cập thất bại',
+                text: `Lỗi: ${error}`,
+                icon: 'error'
+            });
+        });
+    };
+
+    const handleDeleteRole = () => {
+        Swal.fire({
+            title: 'Xác nhận xóa vai trò',
+            text: `Bạn có chắc chắn muốn xóa vai trò "${role.description}" không?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`${REST_API_BASE_URL}/roles/${role.name}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                    .then(response => {
+                        if (response.status !== 200) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.data;
+                    })
+                    .then(() => {
+                        Swal.fire({
+                            title: 'Xóa vai trò thành công',
+                            icon: 'success'
+                        });
+                        fetchRoles();
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Xóa vai trò thất bại',
+                            text: `Lỗi: ${error}`,
+                            icon: 'error'
+                        });
+                    });
+            }
+        });
+    };
+
+    const handleDeletePermission = (permissionName) => {
+        Swal.fire({
+            title: 'Xác nhận xóa quyền truy cập',
+            text: `Bạn có chắc chắn muốn xóa quyền truy cập "${permissionName}" không?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`${REST_API_BASE_URL}/roles/${role.name}/permissions/${permissionName}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                    .then(response => {
+                        if (response.status !== 200) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.data;
+                    })
+                    .then(() => {
+                        Swal.fire({
+                            title: 'Xóa quyền truy cập thành công',
+                            icon: 'success'
+                        });
+                        fetchRoles();
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Xóa quyền truy cập thất bại',
+                            text: `Lỗi: ${error}`,
+                            icon: 'error'
+                        });
+                    });
+            }
+        });
+    };
 
     return (
         <div className="row">
@@ -69,5 +215,8 @@ const RoleItem = ({ role, fetchRoles }) => {
         </div>
     );
 };
-
+RoleItem.propTypes = {
+    role: PropTypes.object.isRequired,
+    fetchRoles: PropTypes.func.isRequired,
+};
 export default RoleItem;

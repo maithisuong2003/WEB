@@ -1,7 +1,8 @@
 package site.laptopshop.backend.dto.dto;
 
 import lombok.Data;
-import site.sugarnest.backend.entities.*;
+import site.laptopshop.backend.entities.SizeColorProductEntity;
+import site.laptopshop.backend.entities.*;
 
 import java.util.List;
 
@@ -21,5 +22,6 @@ public class ProductDto {
     private List<RateEntity> ratesEntity;
     private List<ImportCouponDetailEntity> importCouponDetailsEntity;
     private List<OrderDetailEntity> orderDetailsEntity;
+
 }
 

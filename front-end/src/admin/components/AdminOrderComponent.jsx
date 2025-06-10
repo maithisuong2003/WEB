@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Space } from 'antd';
 import { EyeOutlined, CheckOutlined,CloseOutlined } from '@ant-design/icons';
 

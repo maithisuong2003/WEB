@@ -1,10 +1,85 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppTitleComponent from './AppTitleComponent'
 import RevenueChart from '../util/RevenueChart';
 import RevenuePieChart from '../util/RevenuePieChart';
+import { REST_API_BASE_URL } from '../service/AdminService';
+import axios from 'axios';
 
 
 const AdminReportComponent = () => {
+    const token = localStorage.getItem('token');
+    const [totalAccount, setTotalAccount] = useState(0);
+    const [totalProduct, setTotalProduct] = useState(0);
+    const [totalOrder, setTotalOrder] = useState(0);
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [outOfStock, setOutOfStock] = useState([]);
+    const [newCustomers, setNewCustomers] = useState([]);
+    // eslint-disable-next-line no-unused-vars
+    const [orders, setOrders] = useState([]);
+    const [cancelledOrdersCount, setCancelledOrdersCount] = useState(0);
+    const [topSellingProducts, setTopSellingProducts] = useState([])
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [
+                    outOfStockResponse,
+                    totalAccountResponse,
+                    totalProductResponse,
+                    totalOrderResponse,
+                    totalAmountResponse,
+                    newCustomersResponse,
+                    ordersResponse,
+                    topSellingProductsResponse
+                ] = await Promise.all([
+                    axios.get(`${REST_API_BASE_URL}/products/out-of-stock/4`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }),
+                    axios.get(`${REST_API_BASE_URL}/account/total`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }),
+                    axios.get(`${REST_API_BASE_URL}/products/total`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }),
+                    axios.get(`${REST_API_BASE_URL}/orders/total`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }),
+                    axios.get(`${REST_API_BASE_URL}/orders/total-amount`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }),
+                    axios.get(`${REST_API_BASE_URL}/account/new-accounts/5`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }),
+                    axios.get(`${REST_API_BASE_URL}/orders/admin-orders`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }), axios.get(`${REST_API_BASE_URL}/products/top-selling/5`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    })
+                ]);
+
+                const sortedOutOfStock = outOfStockResponse.data.result.sort((a, b) => {
+                    return a.sizeColorProductsEntity[0].inventoryEntity.quantity - b.sizeColorProductsEntity[0].inventoryEntity.quantity;
+                });
+
+                const cancelledOrders = ordersResponse.data.result.filter(order => order.status === "Đã hủy").length;
+
+                setOutOfStock(sortedOutOfStock);
+                setTotalAccount(totalAccountResponse.data.result);
+                setTotalProduct(totalProductResponse.data.result);
+                setTotalOrder(totalOrderResponse.data.result);
+                setTotalAmount(totalAmountResponse.data.result);
+                setNewCustomers(newCustomersResponse.data.result);
+                setOrders(ordersResponse.data.result);
+                setCancelledOrdersCount(cancelledOrders);
+                setTopSellingProducts(topSellingProductsResponse.data.result);
+            } catch (error) {
+                console.error("There was an error fetching the data!", error);
+            }
+        };
+
+        fetchData();
+    }, []);
     return (
         <main className="app-content">
             <AppTitleComponent />
