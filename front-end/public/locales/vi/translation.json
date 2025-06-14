@@ -1,0 +1,47 @@
+{
+  "translation": {
+    "vi": "Vietnamese",
+    "en": "English"
+  },
+  "home": {
+    "store": "Cửa hàng",
+    "profile": "Thông tin tài khoản",
+    "orders": "Đơn hàng",
+    "admin": "Quản trị viên",
+    "cart": "Giỏ hàng",
+    "shop": "Cửa hàng",
+    "login": "Đăng nhập",
+    "account": "Tài khoản",
+    "logout": "Đăng xuất",
+
+    "home": "TRANG CHỦ",
+    "about": "GIỚI THIỆU",
+    "promotion": "CHƯƠNG TRÌNH KHUYẾN MÃI",
+    "products": "SẢN PHẨM",
+    "contact": "LIÊN HỆ",
+    "gift": "QÙA TẶNG DỊP LỄ",
+    "deal": "DEAL HỜI MỖI NGÀY",
+
+    "pcategory": "DANH MỤC SẢN PHẨM",
+     "pView" : "ĐƯỢC XEM NHIỀU NHẤT",
+    "pTopSell": "SẢN PHẨM BÁN CHẠY NHẤT",
+    "pNew": "SẢN PHẨM MỚI NHẤT",
+    "call": "Gọi điện",
+    "message": "Nhắn tin",
+    "laptop": "LapTop",
+
+    "temporary_total": "Tổng tiền tạm tính",
+    "proceed_checkout": "Tiến hành thanh toán",
+    "no_items": "Không có sản phẩm nào.",
+
+    "macbook": "Macbook",
+    "dell": "Dell",
+    "hp": "Hp",
+    "asus": "Asus",
+    "acer": "Acer",
+
+    "feedback": "GÓP Ý CHÚNG TÔI"
+
+  }
+
+}
