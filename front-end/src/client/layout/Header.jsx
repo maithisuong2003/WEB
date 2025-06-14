@@ -1,15 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
-import './layout.css'
-import Sidebar from './Sidebar.jsx'
+import './layout.css';
+import '../assets/css/header.css';
+import Sidebar from './Sidebar.jsx';
 import { REST_API_BASE_URL } from '../services/ProductService.js';
 import { hasPermission } from '../services/AuthService.js';
 import SearchBar from '../components/SearchBar.jsx';
+import {useTranslation} from "react-i18next";
 
 const Header = () => {
+  const { t, i18n } = useTranslation();
   const [cart, setCart] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const navigator = useNavigate();
@@ -20,7 +23,19 @@ const Header = () => {
 
   const [mobileMenu, setMobileMenu] = useState(false);
   const mobileMenuRef = useRef(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const closeDropdown = (e) => {
+    if (!e.target.closest(".account-wrapper")) {
+      setDropdownOpen(false);
+    }
+  };
   const toggleMobileMenu = () => {
     setMobileMenu(!mobileMenu);
   };
@@ -47,54 +62,47 @@ const Header = () => {
     if (user && user.id) {
       setCheckPermission(hasPermission('ADMIN_PANEL'));
       axios.get(`${REST_API_BASE_URL}/carts/total-items/${user.id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
+        headers: { "Authorization": `Bearer ${token}` }
       })
-        .then(response => {
-          setCartTotal(response.data);
-          updateCart(response.data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+          .then(response => {
+            setCartTotal(response.data);
+            updateCart(response.data);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
     } else {
       setCartTotal(0);
     }
   }, [user, updateCart, token]);
-
 
   useEffect(() => {
     if (!token) {
       return;
     }
     axios.get(`${REST_API_BASE_URL}/carts/my-cart`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: { "Authorization": `Bearer ${token}` }
     })
-      .then(response => {
-        setCart(response.data.result);
-        let reversedCartItems = response.data.result.cartItems.reverse();
-        setCartItems(reversedCartItems);
-      })
-      .catch(error => {
-        console.error("There was an error with the Axios operation:", error);
-      });
+        .then(response => {
+          setCart(response.data.result);
+          let reversedCartItems = response.data.result.cartItems.reverse();
+          setCartItems(reversedCartItems);
+        })
+        .catch(error => {
+          console.error("There was an error with the Axios operation:", error);
+        });
   }, [token, updateCart]);
 
   const deleteCartItem = (cartItemId) => {
     axios.delete(`${REST_API_BASE_URL}/carts/remove-item/${cartItemId}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: { "Authorization": `Bearer ${token}` }
     })
-      .then(response => {
-        updateCart(response.data.result);
-      })
-      .catch(error => {
-        console.error("There was an error removing the cart item:", error);
-      });
+        .then(response => {
+          updateCart(response.data.result);
+        })
+        .catch(error => {
+          console.error("There was an error removing the cart item:", error);
+        });
   };
 
   function getLogout() {
@@ -111,7 +119,7 @@ const Header = () => {
   }
   const handleClick = () => {
     if (user) {
-      navigator(`/profile`);
+      navigator(`/`);
     } else {
       navigator(`/login`);
     }
@@ -128,10 +136,19 @@ const Header = () => {
   function getProduct() {
     navigator(`/products`);
   }
-
+// Hàm xử lý chuyển ngôn ngữ
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng)
+        .then(() => {
+          console.log(`Language changed to: ${lng}`); // Debug
+          setIsOpen(false);
+        })
+        .catch((err) => {
+          console.error('Error changing language:', err);
+        });
+  };
   return (
       <div>
-
         <header className="header header_menu">
           {mobileMenu && (
               <div id="mobile-menu" className="scroll active" ref={mobileMenuRef}>
@@ -142,24 +159,25 @@ const Header = () => {
                         rel="nofollow"
                         onClick={handleClick}
                         className="d-block"
-                        title="Tài khoản"
+                        title={t('account')}
                     >
-                      Tài khoản
+                      {t('home.account')}
                     </a>
                     {user && (
                         <small>
                           <a
-                              title="{user.fullName}"
-                              className="font-weight: light"
+                              title={user.fullName}
+                              className="font-weight-light"
                           >
                             {user.fullName}
                           </a>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          &nbsp;&nbsp;
                           <a
                               onClick={getLogout}
-                              title="{user.fullName}"
-                              className="font-weight: light">
-                            Đăng xuất
+                              title={user.fullName}
+                              className="font-weight-light"
+                          >
+                            {t('home.logout')}
                           </a>
                         </small>
                     )}
@@ -167,10 +185,10 @@ const Header = () => {
                         <small>
                           <a
                               onClick={handleClick}
-                              title="Đăng nhập"
-                              className="font-weight: light"
+                              title={t('login')}
+                              className="font-weight-light"
                           >
-                            Đăng nhập
+                            {t('home.login')}
                           </a>
                         </small>
                     )}
@@ -178,17 +196,17 @@ const Header = () => {
                 </div>
                 <Sidebar/>
                 <div className="mobile-menu-footer border-top w-100 d-flex align-items-center text-center">
-                  <div className="hotline  w-50   p-2 ">
-                    <a href="tel:19006760" title={19006760}>
-                      Gọi điện <i className="fas fa-phone ml-3"/>
+                  <div className="hotline w-50 p-2 ">
+                    <a href="tel:19006760" title={t('call')}>
+                      {t('home.call')} <i className="fas fa-phone ml-3"/>
                     </a>
                   </div>
                   <div className="messenger border-left p-2 w-50 border-left">
                     <a
                         href="https://www.messenger.com/t/100024390078063"
-                        title="https://www.messenger.com/t/100024390078063"
+                        title={t('message')}
                     >
-                      Nhắn tin
+                      {t('home.message')}
                       <i className="fab fa-facebook-messenger ml-3"/>
                     </a>
                   </div>
@@ -199,7 +217,7 @@ const Header = () => {
                style={{'--header-background': 'rgba(255,255,255,0.04)', '--header-color': '#1c1616'}}>
             <div className="container">
               <div className="row align-items-center position-relative">
-                <div className=' col-12 header-main'>
+                <div className='col-12 header-main'>
                   <div className='row align-items-center'>
                     <div className="col-4 d-lg-none menu-mobile">
                       <div onClick={toggleMobileMenu}
@@ -228,45 +246,98 @@ const Header = () => {
                             </div>
                           </div>
                       )}
-                      <a onClick={getHomePage} className="logo-wrapper" title='EGA Cake'>
+                      <a onClick={getHomePage} className="logo-wrapper" title={t('laptop')}>
                         <img loading="lazy" className="img-fluid"
-                             src="https://bizweb.dktcdn.net/100/419/628/themes/897067/assets/logo.png?1704435927037"
-                             alt="logo EGA Cake" width="187" height="50"/>
-                      </a>
+                             src="https://res.cloudinary.com/dhqv00way/image/upload/v1748191585/analysis_ctgnha.png"
+                             alt={t('laptop')}/>
+                      </a> <strong style={{marginLeft: '10px'}}>LAPTOP</strong>
                     </div>
                     <SearchBar/>
                     <div className="col-4 col-lg-4 menu-cart">
                       <ul
                           className="header-right mb-0 list-unstyled d-flex align-items-center justify-content-end">
-                        <li className='media d-lg-block d-none '>
-                          <a onClick={getOrders} className='d-block text-center' title="Đơn hàng">
-                            <img loading="lazy"
-                                 src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/order-icon.png?1704435927037"
-                                 width="24" height="24" className="align-self-center" alt="order-icon"
-                                 style={{filter: 'brightness(0) saturate(100%)'}}/>
-                            <span className='d-none d-xl-block mt-1'>
-                            Đơn hàng
-                          </span>
-                          </a>
+                        <li className="media d-lg-block d-none" style={{marginBottom: '10px'}}>
+                          <div
+                              className="language-dropdown-container"
+                              onMouseEnter={() => setIsOpen(true)}
+                              onMouseLeave={() => setIsOpen(false)}
+                          >
+                            <button className="dropbtn">
+                              <div className="language-content">
+                                {i18n.language === 'en' ? (
+                                    <>
+                                      <img
+                                          src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg"
+                                          alt="US Flag"
+                                          width="20"
+                                          height="15"
+                                      />
+                                      <span className="language-text">English</span>
+                                    </>
+                                ) : (
+                                    <>
+                                      <img
+                                          src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg"
+                                          alt="Vietnam Flag"
+                                          width="20"
+                                          height="15"
+                                      />
+                                      <span className="language-text">Tiếng Việt</span>
+                                    </>
+                                )}
+                              </div>
+                            </button>
+                            {isOpen && (
+                                <div className="language-dropdown">
+                                  <div
+                                      className="dropdown-item"
+                                      onClick={() => changeLanguage('vi')} // Gọi hàm changeLanguage
+                                      style={{cursor: 'pointer'}}
+                                  >
+                                    <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg"
+                                        alt="Vietnam Flag"
+                                        width="20"
+                                        height="15"
+                                    />{' '}
+                                    Tiếng Việt
+                                  </div>
+                                  <div
+                                      className="dropdown-item"
+                                      onClick={() => changeLanguage('en')} // Gọi hàm changeLanguage
+                                      style={{cursor: 'pointer'}}
+                                  >
+                                    <img
+                                        src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg"
+                                        alt="US Flag"
+                                        width="20"
+                                        height="15"
+                                    />{' '}
+                                    English
+                                  </div>
+                                </div>
+                            )}
+                          </div>
                         </li>
+
                         <li className='media d-lg-block d-none '>
                           <a onClick={() => navigator(`/store-address`)} className='d-block text-center'
-                             title="Hệ thống cửa hàng">
+                             title={t('store')}>
                             <img loading="lazy"
                                  src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/address-icon.png?1704435927037"
                                  width="24" height="24" className="align-self-center" alt="phone-icon"
                                  style={{filter: 'brightness(0) saturate(100%)'}}/>
                             <span className='d-none d-xl-block mt-1'>
-                            Cửa hàng
+                            {t('home.store')}
                           </span>
                           </a>
                         </li>
-                        <li className='media d-lg-block d-none  '>
+                        <li className='media d-lg-block d-none '>
                           <div className="account-wrapper">
                             <a
                                 onClick={handleClick}
                                 className='text-center d-block'
-                                title="Tài khoản"
+                                title={t('home.account')}
                             >
                               <img
                                   loading="lazy"
@@ -277,23 +348,32 @@ const Header = () => {
                                   className="align-self-center"
                                   style={{filter: 'brightness(0) saturate(100%)'}}
                               />
-                              {checkPermission && (
-                                  <i onClick={() => getAdmin()} className="fa fa-cog" aria-hidden="true"
-                                     title="Truy cập vào quản trị viên"></i>
-                              )}
-                              <span className='d-none d-xl-block mt-1'>{user ? user.fullName : 'Tài khoản'}</span>
-
+                              <span className='d-none d-xl-block mt-1'>{user ? user.fullName : t('account')}</span>
                             </a>
                             {user && (
-                                <button onClick={() => getLogout()} className="logout-button">Đăng xuất
-                                </button>
+                                <div className="account-dropdown">
+                                  <button className="dropdown-item" onClick={() => navigator('/profile')}>
+                                    {t('home.profile')}
+                                  </button>
+                                  <button className="dropdown-item" onClick={getOrders}>
+                                    {t('home.orders')}
+                                  </button>
+                                  <button className="dropdown-item" onClick={getLogout}>
+                                    {t('home.logout')}
+                                  </button>
+                                  {user.roles?.some(role => role.name === 'ADMIN') && (
+                                      <button className="dropdown-item" onClick={getAdmin}>
+                                        {t('home.admin')}
+                                      </button>
+                                  )}
+                                </div>
                             )}
                           </div>
                         </li>
                         <li className="cartgroup">
                           <div className="mini-cart text-xs-center">
                             <a className="img_hover_cart d-block d-xl-flex flex-column align-items-center"
-                               onClick={getCart} title="Giỏ hàng">
+                               onClick={getCart} title={t('home.cart')}>
                               <div className="cart-icon">
                                 <img loading="lazy"
                                      src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/cart-icon.png?1704435927037"
@@ -301,7 +381,7 @@ const Header = () => {
                                      style={{filter: 'brightness(0) saturate(100%)'}}/>
                                 <span className="count_item count_item_pr">{cartTotal}</span>
                               </div>
-                              <span className='d-xl-block d-none mt-1'>Giỏ hàng</span>
+                              <span className='d-xl-block d-none mt-1'>{t('home.cart')}</span>
                             </a>
                             <div className="top-cart-content card ">
                               {cartItems.length > 0 ? (
@@ -321,18 +401,18 @@ const Header = () => {
                                               </div>
                                               <div className="detail-item">
                                                 <div className="product-details">
-                                                  <span title="Xóa" onClick={() => deleteCartItem(item.id)}
-                                                        className="remove-item-cart fa fa-times"></span>
+                                            <span title="Xóa" onClick={() => deleteCartItem(item.id)}
+                                                  className="remove-item-cart fa fa-times"></span>
                                                   <p className="product-name"><a
                                                       onClick={() => getProduct(item.productEntity.id)}
-                                                      title="Heavy Duty Paper Car">{item.productEntity.nameProduct}</a>
+                                                      title={item.productEntity.nameProduct}>{item.productEntity.nameProduct}</a>
                                                   </p>
                                                 </div>
                                                 <span
                                                     className="variant-title">{item.productSize} / {item.productColor}</span>
                                                 <div className="product-details-bottom">
-                                                  <span
-                                                      className="price">{parseInt(item.productEntity.sizeColorProductsEntity[0].discountPrice).toLocaleString('it-IT')}₫</span>
+                                            <span
+                                                className="price">{parseInt(item.productEntity.sizeColorProductsEntity[0].discountPrice).toLocaleString('it-IT')}₫</span>
                                                   <span className="quanlity"> x {item.quantity}</span>
                                                 </div>
                                               </div>
@@ -341,15 +421,16 @@ const Header = () => {
                                       ))}
                                     </ul>
                                     <div className="pd">
-                                      <div className="top-subtotal">Tổng tiền tạm tính: <span
+                                      <div className="top-subtotal">{t('temporary_total')}: <span
                                           className="price price_big">{parseInt(cart.totalPrice).toLocaleString('it-IT')}₫</span>
                                       </div>
                                     </div>
-                                    <div className="pd right_ct"><a onClick={getCart} className="btn btn-white"><span>Tiến hành thanh toán</span></a>
+                                    <div className="pd right_ct"><a onClick={getCart}
+                                                                    className="btn btn-white"><span>{t('proceed_checkout')}</span></a>
                                     </div>
                                   </ul>
                               ) : (
-                                  <div className="no-item"><p>Không có sản phẩm nào.</p></div>
+                                  <div className="no-item"><p>{t('no_items')}</p></div>
                               )}
                             </div>
                           </div>
@@ -361,78 +442,91 @@ const Header = () => {
               </div>
             </div>
           </div>
-        </header>
-        <div className="sub-header d-lg-block d-none" style={{
-          '--header-background': '#0074bf'
-          , '--header-color': '#ffffff'
-        }}>
-          <div className="container">
-            <div className="navigation--horizontal d-md-flex align-items-center d-none">
-              <div className=" navigation-horizontal-wrapper ">
-                <nav>
-                  <ul className="navigation-horizontal list-group list-group-flush scroll">
-                    <li className="menu-item list-group-item">
-                      <a onClick={getHomePage} className="menu-item__link" title="Trang chủ">
-                        <span> TRANG CHỦ</span>
-                      </a>
-                    </li>
-                    <li className="menu-item list-group-item">
-                      <a onClick={() => navigator(`/introduction`)} className="menu-item__link" title="Giới thiệu">
-                        <span> GIỚI THIỆU</span>
-                      </a>
-                    </li>
-                    <li className="menu-item list-group-item">
-                      <a onClick={() => navigator(`/products`)} className="menu-item__link" title="Quà tặng 08/03">
-                        <span> CHƯƠNG TRÌNH KHUYẾN MÃI</span>
-                      </a>
-
-                    </li>
-                    <li className="menu-item list-group-item">
-                      <a onClick={() => navigator(`/products`)} className="menu-item__link"
-                         title="Chương trình khuyến mãi">
-                        <span> SẢN PHẨM</span>
-                        <i className="fa fa-chevron-right" aria-hidden="true"></i>
-                      </a>
-                      <div className="submenu scroll  default ">
-                        <ul className="submenu__list">
-                          <li className="submenu__item submenu__item--main">
-                            <a className="link" onClick={() => navigator(`/products`)}
-                               title="Landing Page - Flash Sales">Landing Page - Flash Sales</a>
-                          </li>
-                          <li className="submenu__item submenu__item--main">
-                            <a className="link" onClick={() => navigator(`/products`)}
-                               title="Landing Page - Black Friday">Landing Page - Black Friday</a>
-                          </li>
-                          <li className="submenu__item submenu__item--main">
-                            <a className="link" onClick={() => navigator(`/products`)}
-                               title="Landing Page - XMas">Landing Page - XMas</a>
-                          </li>
-                          <li className="submenu__item submenu__item--main">
-                            <a className="link" onClick={() => navigator(`/products`)}
-                               title="Landing Page - FnB">Landing Page - FnB</a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-
-                    <li className="menu-item list-group-item">
-                      <a onClick={() => navigator(`/contact`)} className="menu-item__link" title="Liên hệ">
-                        <span> LIÊN HỆ</span>
-                      </a>
-                    </li>
-                    <li className="menu-item list-group-item">
-                      <a className="menu-item__link" title="Góp ý / Khiếu nại">
-                        <span> GÓP Ý CHÚNG TÔI </span>
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
+          <div className="sub-header d-lg-block d-none" style={{
+            '--header-background': '#0074bf',
+            '--header-color': '#ffffff'
+          }}>
+            <div className="container">
+              <div className="navigation--horizontal d-md-flex align-items-center d-none">
+                <div className=" navigation-horizontal-wrapper ">
+                  <nav>
+                    <ul className="navigation-horizontal list-group list-group-flush scroll">
+                      <li className="menu-item list-group-item">
+                        <a onClick={getHomePage} className="menu-item__link" title={t('home.home')}>
+                          <span><strong>{t('home.home')}</strong></span>
+                        </a>
+                      </li>
+                      <li className="menu-item list-group-item">
+                        <a onClick={() => navigator(`/introduction`)} className="menu-item__link" title={t('about')}>
+                          <span><strong>{t('home.about')}</strong></span>
+                        </a>
+                      </li>
+                      <li className="menu-item list-group-item">
+                        <a onClick={() => navigator(`/products`)} className="menu-item__link" title={t('home.promotion')}>
+                          <span><strong>{t('home.promotion')}</strong></span>
+                        </a>
+                      </li>
+                      <li className="menu-item list-group-item">
+                        <a onClick={() => navigator(`/products`)} className="menu-item__link"
+                           title={t('home.products')}>
+                          <span><strong>{t('home.products')}</strong></span>
+                          <i className="fa fa-chevron-right" aria-hidden="true"></i>
+                        </a>
+                        <div className="submenu scroll default ">
+                          <ul className="submenu__list">
+                            <li className="submenu__item submenu__item--main">
+                              <a className="link" onClick={() => navigator(`/products/Macbook`)}
+                                 title={t('macbook')}>Macbook</a>
+                            </li>
+                            <li className="submenu__item submenu__item--main">
+                              <a className="link" onClick={() => navigator(`/products/Dell`)}
+                                 title={t('dell')}>Dell</a>
+                            </li>
+                            <li className="submenu__item submenu__item--main">
+                              <a className="link" onClick={() => navigator(`/products/Hp`)}
+                                 title={t('hp')}>Hp</a>
+                            </li>
+                            <li className="submenu__item submenu__item--main">
+                              <a className="link" onClick={() => navigator(`/products/Asus`)}
+                                 title={t('asus')}>Asus</a>
+                            </li>
+                            <li className="submenu__item submenu__item--main">
+                              <a className="link" onClick={() => navigator(`/products/Acer`)}
+                                 title={t('acer')}>Acer</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </li>
+                      <li className="menu-item list-group-item">
+                        <a onClick={() => navigator(`/contact`)} className="menu-item__link" title={t('contact')}>
+                          <span><strong>{t('home.contact')}</strong></span>
+                        </a>
+                      </li>
+                      <li className="menu-item list-group-item">
+                        <a href="/khuyen-mai" className="menu-item__link" title={t('gift')}>
+                          <span><strong>{t('home.gift')}</strong></span>
+                        </a>
+                      </li>
+                      <li className="menu-item list-group-item">
+                        <a className="menu-item__link" title={t('feedback')}>
+                          <span><strong>{t('home.feedback')}</strong></span>
+                        </a>
+                      </li>
+                      <li className="menu-item list-group-item">
+                        <a href="/khuyen-mai" className="menu-item__link" title={t('deal')}>
+                          <span><strong>{t('home.deal')}</strong></span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </header>
       </div>
-  )
-}
 
-export default Header
+  );
+};
+
+export default Header;

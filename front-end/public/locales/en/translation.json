@@ -1,0 +1,44 @@
+{
+  "translation": {
+    "vi": "Vietnamese",
+    "en": "English"
+  },
+  "home": {
+    "store": "Store",
+    "profile": "Profile",
+    "orders": "Orders",
+    "admin": "Admin",
+    "cart": "Cart",
+    "shop": "Shop",
+    "login": "Login",
+    "account": "Account",
+    "logout": "Logout",
+
+    "home": "HOME",
+    "about": "ABOUT",
+    "promotion": "PROMOTIONS",
+    "products": "PRODUCTS",
+    "contact": "CONTACT",
+    "gift": "HOLIDAY GIFTS",
+    "deal": "DAILY DEALS",
+
+    "pcategory": "PRODUCT CATEGORIES",
+    "feedback": "FEEDBACK TO US",
+    "pTopSell": "BESTSELLERS",
+    "pView" : "PRODUCT TOP VIEWS",
+    "call": "Call",
+    "message": "Message",
+    "laptop": "Laptop",
+
+    "temporary_total": "Temporary total",
+    "proceed_checkout": "Proceed to checkout",
+    "no_items": "No items.",
+    "macbook": "Macbook",
+    "dell": "Dell",
+    "hp": "HP",
+    "asus": "Asus",
+    "acer": "Acer",
+
+    "pNew": "NEW ARRIVALS"
+  }
+}
