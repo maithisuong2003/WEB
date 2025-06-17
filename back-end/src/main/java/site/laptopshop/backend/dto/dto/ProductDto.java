@@ -1,9 +1,10 @@
 package site.laptopshop.backend.dto.dto;
 
-import lombok.Data;
-import site.laptopshop.backend.entities.SizeColorProductEntity;
+import jakarta.persistence.Column;
+import lombok.*;
 import site.laptopshop.backend.entities.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -14,6 +15,13 @@ public class ProductDto {
     private SupplierEntity supplierEntity;
     private ProducerEntity producerEntity;
     private CategoryEntity categoryEntity;
+    private String cpu;
+    private String gpu;
+    private String os;
+    private BigDecimal weight;
+    private String ram;
+    private String storage;
+    private String refreshRate;
     private String isActive;
     private String isDelete;
     private String status;

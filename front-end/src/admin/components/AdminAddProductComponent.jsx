@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import AppTitleComponent from './AppTitleComponent'
 import Swal from 'sweetalert2';
@@ -12,7 +11,7 @@ const AdminAddProductComponent = () => {
     const [producers, setProducers] = useState([]);
     const [categories, setCategories] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
-    const [products, setProducts] = useState([{ size: '', color: '', quantity: '', listPrice: '', discount: '' }]);
+    const [products, setProducts] = useState([{ size: '', color: '', quantity: '', listPrice: '', discount: ''}]);
     const [mainImage, setMainImage] = useState(null);
     const [descriptionImages, setDescriptionImages] = useState([]);
     const [productName, setProductName] = useState('');
@@ -20,6 +19,14 @@ const AdminAddProductComponent = () => {
     const [selectedProducer, setSelectedProducer] = useState('');
     const [selectedSupplier, setSelectedSupplier] = useState('');
     const [productDescription, setProductDescription] = useState('');
+    const [productCpu,setProductCpu]=useState('');
+    const [productGpu,setProductGpu]=useState('');
+    const [productOs,setProductOs]=useState('');
+    const [productWeight,setProductWeight]=useState('');
+    const [productRam,setProductRam]=useState('');
+    const[productStorage,setProductStorage]=useState('');
+    const[productRefreshRate,setProductRefreshRate]=useState('');
+
     const token = localStorage.getItem('token');
     function getProductManager() {
         navigate('/admin/product-manager')
@@ -226,7 +233,7 @@ const AdminAddProductComponent = () => {
     };
 
     const addProduct = () => {
-        setProducts([...products, { size: '', color: '', quantity: '', listPrice: '', discount: '' }]);
+        setProducts([...products, { size: '', color: '', quantity: '', listPrice: '', discount: ''}]);
     };
 
     const removeProduct = (index) => {
@@ -331,6 +338,13 @@ const AdminAddProductComponent = () => {
             const payloadJSON = {
                 "nameProduct": productName,
                 "description": productDescription,
+                "cpu":productCpu,
+                "gpu":productGpu,
+                "os":productOs,
+                "ram":productRam,
+                "weight":productWeight,
+                "storage":productStorage,
+                "refreshRate":productRefreshRate,
                 "isActive": true,
                 "isDelete": false,
                 "status": "Còn hàng",
@@ -350,7 +364,8 @@ const AdminAddProductComponent = () => {
                         "listPrice": product.listPrice,
                         "discount": product.discount,
                         "inventoryEntity": {
-                            "quantity": product.quantity
+                            "quantity": product.quantity,
+
                         }
                     };
                 }),
@@ -428,7 +443,8 @@ const AdminAddProductComponent = () => {
                                         Danh mục
                                     </label>
                                     <select className="form-control" value={selectedCategory}
-                                            onChange={(e) => setSelectedCategory(e.target.value)} required name="category" id="category">
+                                            onChange={(e) => setSelectedCategory(e.target.value)} required
+                                            name="category" id="category">
                                         <option>-- Chọn danh mục --</option>
                                         {categories.map(category => (
                                             <option key={category.id} value={category.id}>
@@ -448,7 +464,7 @@ const AdminAddProductComponent = () => {
                                         onChange={(e) => setSelectedProducer(e.target.value)}
                                         required
                                     >
-                                        <option>--  Nhà sản xuất --</option>
+                                        <option>-- Nhà sản xuất --</option>
                                         {producers.map(producer => (
                                             <option key={producer.id} value={producer.id}>
                                                 {producer.nameProducer}
@@ -476,83 +492,178 @@ const AdminAddProductComponent = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <table style={{ margin: 10 }} id="product-table" className='responsive-table'>
-                                    <tbody>
-                                    <tr>
-                                        <th>Kích thước</th>
-                                        <th>Màu sắc</th>
-                                        <th>Số lượng</th>
-                                        <th>Giá tiền</th>
-                                        <th>Giảm giá</th>
-                                        <th>Xóa</th>
-                                    </tr>
-                                    {products.map((product, index) => (
-                                        <tr key={index}>
-                                            <td>
-                                                <input
-                                                    className="form-control"
-                                                    type="text"
-                                                    name="size"
-                                                    value={product.size}
-                                                    onChange={(e) => handleInputChange(index, e)}
-                                                    placeholder="Nhập kích thước"
-                                                />
-                                            </td>
-                                            <td>
-                                                <input
-                                                    className="form-control"
-                                                    type="text"
-                                                    name="color"
-                                                    value={product.color}
-                                                    onChange={(e) => handleInputChange(index, e)}
-                                                    placeholder="Nhập màu sắc"
-                                                />
-                                            </td>
-                                            <td>
-                                                <input
-                                                    className="form-control"
-                                                    type="number"
-                                                    name="quantity"
-                                                    value={product.quantity}
-                                                    onChange={(e) => handleInputChange(index, e)}
-                                                    placeholder="Nhập số lượng"
-                                                />
-                                            </td>
-                                            <td>
-                                                <input
-                                                    className="form-control"
-                                                    type="number"
-                                                    name="listPrice"
-                                                    value={product.listPrice}
-                                                    onChange={(e) => handleInputChange(index, e)}
-                                                    placeholder="Nhập giá"
-                                                />
-                                            </td>
-                                            <td>
-                                                <input
-                                                    className="form-control"
-                                                    type="number"
-                                                    name="discount"
-                                                    value={product.discount}
-                                                    onChange={(e) => handleInputChange(index, e)}
-                                                    placeholder="Nhập giảm giá"
-                                                />
-                                            </td>
-                                            <td className="text-center">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-danger btn-sm"
-                                                    onClick={() => removeProduct(index)}
-                                                >
-                                                    <i className="fas fa-trash"></i>
-                                                </button>
-                                            </td>
+                                <div style={{margin: 10}}>
+                                    {/* First Table: Basic Product Details */}
+                                    <table id="product-table-1" className="responsive-table" style={{marginBottom: 20}}>
+                                        <thead>
+                                        <tr>
+                                            <th colSpan="6">Thông tin cơ bản</th>
                                         </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
+                                        <tr>
+                                            <th>Kích thước</th>
+                                            <th>Màu sắc</th>
+                                            <th>Số lượng</th>
+                                            <th>Giá tiền</th>
+                                            <th>Giảm giá</th>
+                                            <th>Xóa</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {products.map((product, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="size"
+                                                        value={product.size}
+                                                        onChange={(e) => handleInputChange(index, e)}
+                                                        placeholder="Nhập kích thước"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        type="text"
+                                                        name="color"
+                                                        value={product.color}
+                                                        onChange={(e) => handleInputChange(index, e)}
+                                                        placeholder="Nhập màu sắc"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        type="number"
+                                                        name="quantity"
+                                                        value={product.quantity}
+                                                        onChange={(e) => handleInputChange(index, e)}
+                                                        placeholder="Nhập số lượng"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        type="number"
+                                                        name="listPrice"
+                                                        value={product.listPrice}
+                                                        onChange={(e) => handleInputChange(index, e)}
+                                                        placeholder="Nhập giá"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        type="number"
+                                                        name="discount"
+                                                        value={product.discount}
+                                                        onChange={(e) => handleInputChange(index, e)}
+                                                        placeholder="Nhập giảm giá"
+                                                    />
+                                                </td>
+                                                <td className="text-center">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={() => removeProduct(index)}
+                                                    >
+                                                        <i className="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+
+                                    {/* Second Table: Technical Specifications */}
+                                    <table id="product-table-2" className="responsive-table">
+                                        <thead>
+                                        <tr>
+                                            <th colSpan="7">Thông tin kỹ thuật</th>
+                                        </tr>
+                                        <tr>
+                                            <th>CPU</th>
+                                            <th>GPU</th>
+                                            <th>Hệ điều hành</th>
+                                            <th>Trọng lượng</th>
+                                            <th>RAM</th>
+                                            <th>Lưu trữ</th>
+                                            <th>Tần số quét</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {products.map((product, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        id="productCpu"
+                                                        value={productCpu}
+                                                        onChange={(e) => setProductCpu(e.target.value)}
+                                                        placeholder="Nhập CPU"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        id="productGpu"
+                                                        value={productGpu}
+                                                        onChange={(e) => setProductGpu(e.target.value)}
+                                                        placeholder="Nhập GPU"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        id="productOs"
+                                                        value={productOs}
+                                                        onChange={(e) => setProductOs(e.target.value)}
+                                                        placeholder="Nhập HĐH"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        id="productWeight"
+                                                        value={productWeight}
+                                                        onChange={(e) => setProductWeight(e.target.value)}
+                                                        placeholder="Nhập trọng lượng"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        id="productRam"
+                                                        value={productRam}
+                                                        onChange={(e) => setProductRam(e.target.value)}
+                                                        placeholder="Nhập RAM"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        id="productStorage"
+                                                        value={productStorage}
+                                                        onChange={(e) => setProductStorage(e.target.value)}
+                                                        placeholder="Nhập lưu trữ"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className="form-control"
+                                                        id="productRefreshRate"
+                                                        value={productRefreshRate}
+                                                        onChange={(e) => setProductRefreshRate(e.target.value)}
+                                                        placeholder="Nhập tần số quét"
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <button
-                                    style={{ margin: '0 0 30px 10px' }}
+                                    style={{margin: '0 0 30px 10px'}}
                                     className="btn btn-add"
                                     type="button"
                                     onClick={addProduct}
@@ -563,15 +674,16 @@ const AdminAddProductComponent = () => {
                                 <div className="form-group col-md-12">
                                     <label className="control-label">Ảnh đại diện sản phẩm</label>
                                     <div id="myfileupload">
-                                        <label htmlFor="uploadfile-main" className="Choicefile" style={{ color: 'white', cursor: 'pointer' }}>
-                                            <i className="fas fa-cloud-upload-alt" /> Chọn ảnh
+                                        <label htmlFor="uploadfile-main" className="Choicefile"
+                                               style={{color: 'white', cursor: 'pointer'}}>
+                                            <i className="fas fa-cloud-upload-alt"/> Chọn ảnh
                                         </label>
                                         <input
                                             type="file"
                                             id="uploadfile-main"
                                             name="ImageUpload"
                                             onChange={handleMainImageChange}
-                                            style={{ display: 'none' }}
+                                            style={{display: 'none'}}
                                         />
                                     </div>
                                     <div id="thumbbox">
@@ -598,8 +710,9 @@ const AdminAddProductComponent = () => {
                                 <div className="form-group col-md-12">
                                     <label className="control-label">Ảnh mô tả sản phẩm</label>
                                     <div id="myfileupload">
-                                        <label htmlFor="uploadfile-description" className="Choicefile" style={{ color: 'white', cursor: 'pointer' }}>
-                                            <i className="fas fa-cloud-upload-alt" /> Chọn ảnh
+                                        <label htmlFor="uploadfile-description" className="Choicefile"
+                                               style={{color: 'white', cursor: 'pointer'}}>
+                                            <i className="fas fa-cloud-upload-alt"/> Chọn ảnh
                                         </label>
                                         <input
                                             type="file"
@@ -607,7 +720,7 @@ const AdminAddProductComponent = () => {
                                             name="ImageUpload"
                                             multiple
                                             onChange={handleDescriptionImagesChange}
-                                            style={{ display: 'none' }}
+                                            style={{display: 'none'}}
                                         />
                                     </div>
                                     <div id="thumbbox">
@@ -643,7 +756,7 @@ const AdminAddProductComponent = () => {
                                 <button className="btn btn-save" type="sumit">
                                     Lưu lại
                                 </button>
-                                <a style={{ marginLeft: 5 }} className="btn btn-cancel" onClick={getProductManager}>
+                                <a style={{marginLeft: 5}} className="btn btn-cancel" onClick={getProductManager}>
                                     Hủy bỏ
                                 </a>
                             </form>
