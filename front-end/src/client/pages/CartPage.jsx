@@ -4,10 +4,13 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import MyPayPalButton from '../util/MyPayPalButton.jsx';
+import ReCAPTCHA from "react-google-recaptcha";
+
 import { REST_API_BASE_URL } from '../services/ProductService.js';
 import Swal from 'sweetalert2';
 import { Modal, Button } from 'react-bootstrap';
 import '../assets/css/voucher.css';
+import {useTranslation} from "react-i18next";
 const CartPage = () => {
    const navigate = useNavigate();
    const [cart, setCart] = useState([]);
@@ -23,6 +26,8 @@ const CartPage = () => {
    const [selectedPromotion, setSelectedPromotion] = useState(null);
    const [manualCode, setManualCode] = useState(''); // State cho mã nhập thủ công
    const [errorMessage, setErrorMessage] = useState(''); // State cho thông báo lỗi
+   const { t, i18n } = useTranslation();
+   const [recaptchaToken, setRecaptchaToken] = useState(null);
 
    const [orderData, setOrderData] = useState({
       address: '',
@@ -30,7 +35,9 @@ const CartPage = () => {
       note: '',
       sale: ''
    });
-
+   const handleRecaptcha = (token) => {
+      setRecaptchaToken(token); // lưu token từ Google
+   };
 
    // Xử lý thay đổi giá trị các ô nhập liệu
    const handleInputChange = (e) => {
@@ -150,8 +157,8 @@ const CartPage = () => {
       if (!address || !deliveryAt) {
          Swal.fire({
             icon: 'error',
-            title: 'Chưa đủ thông tin',
-            text: 'Vui lòng điền đầy đủ thông tin.',
+            title: t('home.lossInfo'),
+            text: t('home.fillInfo'),
          });
          return;
       }
@@ -173,16 +180,16 @@ const CartPage = () => {
              console.log(response.data.result);
              Swal.fire({
                 icon: 'success',
-                title: 'Đặt hàng',
-                text: 'Đặt hàng thành công!',
+                title: t('home.order'),
+                text: t('home.orderSuccess'),
              });
           })
           .catch(error => {
              console.error('There was an error placing the order:', error);
              Swal.fire({
                 icon: 'error',
-                title: 'Đặt hàng',
-                text: 'Đặt hàng thất bại. Vui lòng thử lại!',
+                title:  t('home.order'),
+                text:  t('home.orderError'),
              });
           });
    };
@@ -259,6 +266,17 @@ const CartPage = () => {
 
    // Kiểm tra mã giảm giá còn hiệu lực không
    const isPromotionValid = (promotion) => new Date(promotion.endTime) > new Date();
+   const verifyCaptcha = async () => {
+      const response = await fetch("https://localhost:8080/api/recaptcha/verify?token=" + recaptchaToken, {
+         method: "POST"
+      });
+      const text = await response.text();
+      if (text === "Captcha hợp lệ") {
+         // Tiếp tục xử lý thanh toán
+      } else {
+         alert("Bạn cần xác minh Captcha trước khi thanh toán");
+      }
+   };
 
    return (
        <section className="main-cart-page main-container col1-layout mobile-tab active" id="cart-tab" data-title="Giỏ hàng">
@@ -268,7 +286,7 @@ const CartPage = () => {
                     <form className="margin-bottom-0">
                        <div className="header-cart">
                           <div className=" title_cart_mobile heading-bar">
-                             <h1 className="heading-bar__title">Giỏ hàng</h1>
+                             <h1 className="heading-bar__title">{t('home.cart')}</h1>
                           </div>
                        </div>
                        <div className="header-cart-content">
@@ -323,7 +341,7 @@ const CartPage = () => {
                                 ))
                              }
                              <div className="cart-note">
-                                <label htmlFor="note" className="note-label">Ghi chú đơn hàng</label>
+                                <label htmlFor="note" className="note-label">{t('home.note')}</label>
                                 <textarea id="note" name="note" rows="8" onChange={handleInputChange}></textarea>
                              </div>
                           </div>
@@ -334,9 +352,9 @@ const CartPage = () => {
                                       <span aria-hidden="true">×</span></button>
                                    <div className="timedeli d-sm-block">
                                       <div className="checkout-form-container p-3 bg-light rounded shadow-sm">
-                                         <h4 className="mb-3 font-weight-bold text-primary">Thông tin giao hàng</h4>
+                                         <h4 className="mb-3 font-weight-bold text-primary">{t('home.deliveryInfo')}</h4>
                                          <div className="form-group mb-3">
-                                            <label htmlFor="datepicker" className="form-label">Ngày nhận hàng</label>
+                                            <label htmlFor="datepicker" className="form-label">{t('home.dateReceipt')}</label>
                                             <input
                                                 id="datepicker"
                                                 type="date"
@@ -347,44 +365,43 @@ const CartPage = () => {
                                             />
                                          </div>
                                          <div className="form-group mb-3">
-                                            <label htmlFor="nameOrder" className="form-label">Họ và tên</label>
+                                            <label htmlFor="nameOrder" className="form-label">{t('home.fullName')}</label>
                                             <input
                                                 id="nameOrder"
                                                 type="text"
                                                 className="form-control"
-                                                placeholder="Nhập họ và tên người nhận"
+                                                placeholder={t('home.fullName')}
                                                 required
                                             />
                                          </div>
                                          <div className="form-group mb-3">
-                                            <label htmlFor="phoneNumber" className="form-label">Số điện thoại</label>
+                                            <label htmlFor="phoneNumber" className="form-label">{t('home.phone')}</label>
                                             <input
                                                 id="phoneNumber"
                                                 type="tel"
                                                 className="form-control"
-                                                placeholder="Nhập số điện thoại"
+                                                placeholder={t('home.phone')}
                                                 required
                                             />
                                          </div>
                                          <div className="form-group mb-3">
-                                            <label htmlFor="address" className="form-label">Địa chỉ nhận hàng</label>
+                                            <label htmlFor="address" className="form-label">{t('home.address')}</label>
                                             <input
                                                 id="address"
                                                 type="text"
                                                 className="form-control"
-                                                placeholder="Nhập địa chỉ nhận hàng"
+                                                placeholder={t('home.address')}
                                                 onChange={handleInputChange}
                                                 required
                                             />
                                          </div>
                                          <div className="form-group mb-3">
-                                            <label htmlFor="note" className="form-label">Ghi chú đơn hàng (nếu
-                                               có)</label>
+                                            <label htmlFor="note" className="form-label">{t('home.deliveryNote')}</label>
                                             <textarea
                                                 id="note"
                                                 rows="3"
                                                 className="form-control"
-                                                placeholder="Nhập ghi chú cho đơn hàng"
+                                                placeholder={t('home.deliveryNote')}
                                                 onChange={handleInputChange}
                                             ></textarea>
                                          </div>
@@ -401,21 +418,10 @@ const CartPage = () => {
                                 <div className="total-line-table__tbody">
                                    <div className="total-line total-line--subtotal d-sm-flex justify-content-between">
                                       <div className="total-line__name">
-                                         <strong>Tạm tính</strong>
+                                         <strong>{t('home.temporary_total')}</strong>
                                       </div>
                                       <div className="total-line__price">
                                          {parseInt(cart.totalPrice).toLocaleString('it-IT')}₫
-                                      </div>
-                                   </div>
-                                   <div
-                                       className="total-line total-line--shipping-fee d-sm-flex justify-content-between">
-                                      <div className="total-line__name">
-                                         <strong>Phí vận chuyển</strong>
-                                      </div>
-                                      <div className="total-line__price">
-                                         <span className="origin-price"
-                                               data-bind="getTextShippingPriceOriginal()"></span>
-                                         <span data-bind="getTextShippingPriceFinal()">40.000₫</span>
                                       </div>
                                    </div>
                                    {selectedPromotion && (
@@ -438,23 +444,23 @@ const CartPage = () => {
                                 </div>
                              </div>
                              <div className="title-cart d-none d-sm-flex ">
-                                <h3 className="text-xs-left">TỔNG CỘNG</h3>
+                                <h3 className="text-xs-left">{t('home.total')}</h3>
                                 <span className="text-xs-right totals_price_mobile">
                                  {parseInt(finalPrice).toLocaleString('it-IT')}₫
                               </span>
-                                <i className="text-xs-right price_vat ">(Đã bao gồm VAT nếu có)</i>
+                                <i className="text-xs-right price_vat ">({t('home.vat')})</i>
                              </div>
                              <div className="coupon-toggle d-flex justify-content-between align-items-center">
                                 <div>
                                    <img className="mr-1"
                                         src="//bizweb.dktcdn.net/100/419/628/themes/897067/assets/coupon-icon.png?1704435927037"
                                         alt="delivery"/>
-                                   <span>Mã giảm giá</span>
+                                   <span>{t('home.coupon')}</span>
                                 </div>
                                 <div className="coupon-toggle-btn">
                                  <span className="mr-1" onClick={() => setShowPromotions(true)}
                                        style={{cursor: 'pointer'}}>
-                                    Chọn mã giảm giá
+                                    {t('home.chooseCoupon')}
                                  </span>
                                 </div>
                              </div>
@@ -547,12 +553,12 @@ const CartPage = () => {
                              <div className="checkout d-none d-sm-block">
                                 <button className="btn btn-block btn-proceed-checkout-mobile"
                                         title="Tiến hành thanh toán" type="button" onClick={handleCheckout}>
-                                   <span>Thanh Toán</span>
+                                   <span>{t('home.checkout')}</span>
                                 </button>
                              </div>
                              <div className="cart-trustbadge mt-3">
                               <span className="title-menu">
-                                 Phương thức thanh toán
+                                 ({t('home.payment')})
                               </span>
                                 <div className="trustbadge">
                                    <a target="_blank" title="Phương thức thanh toán">
@@ -562,7 +568,13 @@ const CartPage = () => {
                                    </a>
                                 </div>
                              </div>
-                             {isFormComplete ? (
+
+                             <ReCAPTCHA
+                                 sitekey="6LfWf2MrAAAAAPmx0sBuw661smI4Gm9YoiJIi3WZ"
+                                 onChange={handleRecaptcha}
+                             />
+
+                             {isFormComplete && recaptchaToken ? (
                                  <MyPayPalButton
                                      total={cart.totalPrice}
                                      currency="USD"
@@ -572,8 +584,9 @@ const CartPage = () => {
                                      updateCart={updateCart}
                                  />
                              ) : (
-                                 <div className="text-danger">Vui lòng điền vào tất cả các trường bắt buộc để kích hoạt
-                                    thanh toán PayPal.</div>
+                                 <div className="text-danger">
+                                    {!isFormComplete ? t('home.paypal') : "Vui lòng xác minh reCAPTCHA trước khi thanh toán."}
+                                 </div>
                              )}
                           </div>
                        </div>
@@ -622,5 +635,3 @@ const CartPage = () => {
 };
 
 export default CartPage;
-
-
